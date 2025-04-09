@@ -3,6 +3,7 @@
 const nextConfig = {
   reactStrictMode: false,
   output: 'export',
+  distDir: 'out',
   images: {
     unoptimized: true,
     remotePatterns: [
@@ -31,6 +32,14 @@ const nextConfig = {
   publicRuntimeConfig: {
     basePath: '/MelVocalcoachingbBerlin',
   },
+  // Exclude backup and temporary directories from build
+  pageExtensions: ['tsx', 'ts', 'jsx', 'js'].filter(ext => 
+    !ext.includes('backup') && !ext.includes('bak')
+  ),
+  onDemandEntries: {
+    maxInactiveAge: 25 * 1000,
+    pagesBufferLength: 2,
+  }
 }
 
 module.exports = nextConfig
