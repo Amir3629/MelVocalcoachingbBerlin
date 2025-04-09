@@ -50,19 +50,19 @@ export const metadata: Metadata = {
   description: "Professional vocal coaching and performance in Berlin",
   icons: {
     icon: [
-      { url: process.env.NODE_ENV === 'production' ? '/vocal-coaching/favicon.ico' : '/favicon.ico' },
-      { url: process.env.NODE_ENV === 'production' ? '/vocal-coaching/images/logo/ml-logo.PNG' : '/images/logo/ml-logo.PNG', type: 'image/png', sizes: '64x64' }
+      { url: '/favicon.ico' },
+      { url: '/images/logo/ml-logo.PNG', type: 'image/png', sizes: '64x64' }
     ],
-    shortcut: { url: process.env.NODE_ENV === 'production' ? '/vocal-coaching/images/logo/ml-logo.PNG' : '/images/logo/ml-logo.PNG', sizes: '196x196' },
-    apple: { url: process.env.NODE_ENV === 'production' ? '/vocal-coaching/images/logo/ml-logo.PNG' : '/images/logo/ml-logo.PNG', sizes: '180x180' },
+    shortcut: { url: '/images/logo/ml-logo.PNG', sizes: '196x196' },
+    apple: { url: '/images/logo/ml-logo.PNG', sizes: '180x180' },
     other: [
       {
-        url: process.env.NODE_ENV === 'production' ? '/vocal-coaching/favicon/site.webmanifest' : '/favicon/site.webmanifest',
+        url: '/favicon/site.webmanifest',
         rel: 'manifest'
       }
     ]
   },
-  manifest: process.env.NODE_ENV === 'production' ? '/vocal-coaching/favicon/site.webmanifest' : '/favicon/site.webmanifest',
+  manifest: '/favicon/site.webmanifest',
 }
 
 export default function RootLayout({

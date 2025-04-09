@@ -19,8 +19,8 @@ const nextConfig = {
       }
     ],
   },
-  basePath: '/MelVocalcoachingbBerlin',
-  assetPrefix: '/MelVocalcoachingbBerlin/',
+  basePath: '',
+  assetPrefix: '',
   trailingSlash: true,
   webpack: (config) => {
     config.module.rules.push({
@@ -30,7 +30,7 @@ const nextConfig = {
     return config
   },
   publicRuntimeConfig: {
-    basePath: '/MelVocalcoachingbBerlin',
+    basePath: '',
   },
   // Exclude backup and temporary directories from build
   pageExtensions: ['tsx', 'ts', 'jsx', 'js'].filter(ext => 
