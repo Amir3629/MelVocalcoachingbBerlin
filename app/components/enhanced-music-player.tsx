@@ -1,37 +1,40 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import Image from "next/image";
-import { Play, Pause, Music } from "lucide-react";
-import { getMediaPath } from "@/app/utils/asset-path";
+import { Play, Pause } from "lucide-react";
+import { getAudioPath } from "@/app/utils/paths";
+import "./direct-fix.css";
+import { useMedia } from "./media-context";
 
 // Add event system for media coordination
 const MEDIA_STOP_EVENT = 'stopAllMedia';
 
 export default function EnhancedMusicPlayer() {
+  const { currentlyPlaying, setCurrentlyPlaying, stopAllMedia } = useMedia();
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showMiniPlayer, setShowMiniPlayer] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   
   const audioRef = useRef<HTMLAudioElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLImageElement | null>(null);
   
+  // Add a test marker in the top right corner
+  const [testMarker, setTestMarker] = useState('blue');
+
+  // Track details
   const track = {
     title: "Blues for John",
     artist: "Melvo Jazz",
     file: "/audio/AUDIO-2025-03-19-16-15-29",
-    youtubeId: "hFdMHvB6-Jk",
-    image: "/photo_8_2025-02-27_12-05-55.jpg"
+    image: "/123.png"
   };
 
-  // Get YouTube thumbnail URL - use higher quality image
-  const getYouTubeThumbnail = (youtubeId: string) => {
-    // Use the highest quality thumbnail available
-    return `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`;
-  };
-
+  // Listen for global stop events
   useEffect(() => {
     // Listen for stop events from other media players
     const handleMediaStop = () => {
@@ -44,218 +47,454 @@ export default function EnhancedMusicPlayer() {
     };
 
     window.addEventListener(MEDIA_STOP_EVENT, handleMediaStop);
-    return () => window.removeEventListener(MEDIA_STOP_EVENT, handleMediaStop);
-  }, [isPlaying]);
-
-  // Update audio src
-  useEffect(() => {
-    if (audioRef.current) {
-      // Get proper filename without path prefixes
-      const filename = track.file.split('/').pop()?.trim();
-      
-      if (filename) {
-        // Use our utility function to get the correct path and add mp3 extension if missing
-        const properPath = getMediaPath(filename.endsWith('.mp3') ? filename : `${filename}.mp3`);
-        audioRef.current.src = properPath;
-        console.log("Audio source set to:", properPath);
-        
-        // Set volume to make sure it's audible
-        audioRef.current.volume = 1.0;
-        
-        // Preload the audio
-        audioRef.current.load();
-        
-        // Add audio event listeners
-        audioRef.current.addEventListener('canplaythrough', () => {
-          console.log("Audio can play through, ready to play");
-        });
-        
-        audioRef.current.addEventListener('error', (e) => {
-          console.error("Audio loading error:", e);
-          const audioElement = e.target as HTMLAudioElement;
-          if (audioElement.error) {
-            console.error("Error code:", audioElement.error.code, "Message:", audioElement.error.message);
-          }
-        });
-      }
-    }
-  }, [track.file]);
-
-  // Handle scroll to show/hide mini player
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!sectionRef.current || !isPlaying) return;
-      
-      // Get section position
-      const rect = sectionRef.current.getBoundingClientRect();
-      
-      // Show mini player if section is out of view and music is playing
-      if (rect.bottom < 0 || rect.top > window.innerHeight) {
-        setShowMiniPlayer(true);
-      } else {
-        setShowMiniPlayer(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [isPlaying]);
-
-  // Handle play/pause with better error handling
-  const handlePlay = () => {
-    if (isPlaying) {
+    
+    // Listen for media context changes
+    if (currentlyPlaying === 'video' && isPlaying) {
       setIsPlaying(false);
-      setShowMiniPlayer(false);
       if (audioRef.current) {
         audioRef.current.pause();
-        console.log("Audio paused");
       }
-    } else {
-      // Dispatch event to stop other media
-      window.dispatchEvent(new Event(MEDIA_STOP_EVENT));
-      setIsPlaying(true);
-      setIsLoading(true);
+    }
+    
+    return () => window.removeEventListener(MEDIA_STOP_EVENT, handleMediaStop);
+  }, [isPlaying, currentlyPlaying]);
+
+  // Handle mini-player visibility
+  useEffect(() => {
+    // Only run in browser
+    if (typeof window === 'undefined') return;
+    
+    let animationFrameId: number | null = null;
+    let isAnimatingOut = false;
+    
+    const handleScroll = () => {
+      if (!isPlaying) {
+        setShowMiniPlayer(false);
+        return;
+      }
       
-      if (audioRef.current) {
-        try {
-          console.log("Attempting to play audio:", audioRef.current.src);
+      // Always check if music section is in viewport
+      if (sectionRef.current) {
+        const rect = sectionRef.current.getBoundingClientRect();
+        
+        // Show mini player when scrolled past half of the music section
+        const shouldShow = rect.top < -300;
+        
+        // If we're already animating out, don't interrupt
+        if (isAnimatingOut) return;
+        
+        if (shouldShow !== showMiniPlayer) {
+          // If hiding, start smooth exit animation
+          if (showMiniPlayer && !shouldShow) {
+            const minibar = document.getElementById('fixed-fallback-minibar');
+            if (minibar) {
+              // Set flag to prevent interruption
+              isAnimatingOut = true;
+              
+              // Smoother animation with JS for more consistent exit
+              const duration = 600; // ms - slightly faster for better responsiveness
+              const startTime = performance.now();
+              
+              // Prevent clicks during animation
+              minibar.style.pointerEvents = 'none';
+              
+              const animateExit = (currentTime: number) => {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Use cubic ease-out curve for natural motion
+                const easeValue = 1 - Math.pow(1 - progress, 3);
+                
+                // Apply transition
+                minibar.style.opacity = `${1 - easeValue}`;
+                minibar.style.transform = `translate(-50%, ${easeValue * 20}px)`;
+                
+                if (progress < 1) {
+                  // Continue animation with high priority
+                  animationFrameId = requestAnimationFrame(animateExit);
+                } else {
+                  // Animation complete
+                  setShowMiniPlayer(false);
+                  isAnimatingOut = false;
+                  animationFrameId = null;
+                }
+              };
+              
+              // Start animation with high priority
+              animationFrameId = requestAnimationFrame(animateExit);
+            } else {
+              setShowMiniPlayer(false);
+            }
+          } else {
+            setShowMiniPlayer(shouldShow);
+          }
           
-          // Make sure volume is set
-          audioRef.current.volume = 1.0;
-          audioRef.current.currentTime = 0; // Start from beginning if it ended
+          // Update marker color
+          setTestMarker(shouldShow ? 'green' : 'orange');
+        }
+      }
+    };
+    
+    // Throttled scroll handler for better performance
+    let ticking = false;
+    const scrollListener = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    
+    // Run immediately
+    handleScroll();
+    
+    // Add optimized scroll event listener
+    window.addEventListener('scroll', scrollListener, { passive: true });
+    
+    // Clean up
+    return () => {
+      window.removeEventListener('scroll', scrollListener);
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+    };
+  }, [isPlaying, showMiniPlayer]);
+
+  // Create audio element
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    // Create separate audio instance
+    const audioEl = new Audio();
+    audioEl.src = "/audio/AUDIO-2025-03-19-16-15-29.mp3";
+    audioEl.volume = 1.0;
+    audioEl.preload = "auto";
+    
+    // Directly set the ref
+    if (audioRef && audioRef.current === null) {
+      // @ts-ignore - we need to set this directly
+      audioRef.current = audioEl;
+    }
+    
+    // Add event listeners
+    audioEl.addEventListener('ended', () => {
+      setIsPlaying(false);
+      setShowMiniPlayer(false);
+    });
+    
+    audioEl.addEventListener('error', () => {
+      setError("Failed to play audio. Please try again.");
+      setIsPlaying(false);
+      setIsLoading(false);
+    });
+    
+    // Load the audio
+    audioEl.load();
+    
+    return () => {
+      // Clean up
+      audioEl.pause();
+      audioEl.removeEventListener('ended', () => {});
+      audioEl.removeEventListener('error', () => {});
+    };
+  }, []);
+
+  // Audio-Video coordination
+  useEffect(() => {
+    // If the current playing media type changes to video, pause our audio
+    if (currentlyPlaying === 'video' && isPlaying) {
+    if (audioRef.current) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+        setShowMiniPlayer(false);
+      }
+    }
+  }, [currentlyPlaying, isPlaying]);
+
+  // Play/pause handler
+  const handlePlay = () => {
+    if (!audioRef.current) return;
+    
+    try {
+      if (isPlaying) {
+        // Pause the audio
+        audioRef.current.pause();
+        setCurrentlyPlaying(null);
+        
+        // Add consistent exit animation for the minibar
+        const minibar = document.getElementById('fixed-fallback-minibar');
+        if (minibar) {
+          // Smooth animation with consistent timing
+          const duration = 600; // ms - match scroll handler duration
+          const startTime = performance.now();
+          let animationFrameId: number | null = null;
           
-          // Use the play() method directly
+          // Prevent clicks during animation
+          minibar.style.pointerEvents = 'none';
+          
+          const animateExit = (currentTime: number) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // Use cubic ease-out curve for natural motion
+            const easeValue = 1 - Math.pow(1 - progress, 3);
+            
+            // Apply transition
+            minibar.style.opacity = `${1 - easeValue}`;
+            minibar.style.transform = `translate(-50%, ${easeValue * 20}px)`;
+            
+            if (progress < 1) {
+              // Continue animation with high priority
+              animationFrameId = requestAnimationFrame(animateExit);
+            } else {
+              // Animation complete
+        setIsPlaying(false);
+        setShowMiniPlayer(false);
+              if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+              }
+            }
+          };
+          
+          // Start animation with high priority
+          animationFrameId = requestAnimationFrame(animateExit);
+      } else {
+          setIsPlaying(false);
+          setShowMiniPlayer(false);
+        }
+      } else {
+        // Stop all other media through the context
+        stopAllMedia();
+        
+        // Update media context
+        setCurrentlyPlaying('music');
+        
+        // Reset and play
+        audioRef.current.currentTime = 0;
+        
           const playPromise = audioRef.current.play();
           
-          if (playPromise !== undefined) {
+        if (playPromise) {
             playPromise
               .then(() => {
-                console.log("Audio playing successfully");
-                setIsLoading(false);
+                setIsPlaying(true);
               })
               .catch(err => {
           console.error("Failed to play audio:", err);
                 setError("Failed to play audio. Please try again.");
-                setIsPlaying(false);
-                setIsLoading(false);
-              });
-          }
-        } catch (err) {
-          console.error("Exception while playing audio:", err);
-          setError("Failed to play audio. Please try again.");
-          setIsPlaying(false);
-          setIsLoading(false);
+            });
         }
       }
+    } catch (err) {
+      console.error("Exception in play handler:", err);
+      setError("Failed to play audio. Please try again.");
     }
   };
 
-  // Handle audio ended
-  const handleEnded = () => {
-    setIsPlaying(false);
-    setShowMiniPlayer(false);
-  };
-
-  // Handle audio error
-  const handleError = (e: React.SyntheticEvent<HTMLAudioElement, Event>) => {
-    console.error("Audio error:", e);
-    setError("Failed to play audio. Please try again.");
-    setIsPlaying(false);
-    setIsLoading(false);
-    setShowMiniPlayer(false);
-  };
-
-  // Scroll to music section when mini player is clicked
-  const scrollToMusicSection = () => {
-    // Removed auto-scrolling behavior
-    console.log("Mini player clicked");
-  };
-
   return (
-    <div className="relative w-full py-24 overflow-hidden" ref={sectionRef}>
+    <div className="relative w-full py-24 overflow-hidden music-section clearfix" ref={sectionRef}>
       <div className="absolute inset-0 bg-black/95 backdrop-blur-xl z-0"></div>
       
       <div className="relative z-10 flex flex-col items-center">
-        <h2 className="text-3xl font-bold text-white mb-6">Meine Musik</h2>
+        <h2 className="text-3xl font-bold text-white mb-6" id="meine-musik-header">Meine Musik</h2>
         <div className="w-16 h-1 bg-[#C8A97E] mb-12"></div>
         
-        {/* Single Disc Container */}
-        <div className="relative w-full h-96 mx-auto mb-4">
-          {/* Main Vinyl Disc */}
+        {/* Vinyl Disc */}
+        <div style={{
+          width: '260px',
+          maxWidth: '80vw',
+          margin: '0 auto',
+          marginBottom: '1rem',
+          position: 'relative'
+        }}>
+          <div style={{
+            paddingTop: '100%',
+            position: 'relative',
+            overflow: 'hidden',
+            borderRadius: '50%'
+          }}>
           <motion.div 
-            className="absolute top-1/2 left-1/2 w-96 h-96 -translate-x-1/2 -translate-y-1/2 cursor-pointer z-30"
-            transition={{ duration: 0.3 }}
-            style={{ boxShadow: '0 25px 60px rgba(0, 0, 0, 0.7)' }}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  borderRadius: '50%',
+                  overflow: 'hidden',
+                  cursor: 'pointer',
+                boxShadow: '0 25px 60px rgba(0, 0, 0, 0.7)'
+                }}
             onClick={handlePlay}
           >
-            {/* Main disc */}
-            <div className="absolute inset-0 rounded-full overflow-hidden shadow-2xl">
-              {/* Disc image background - spinning only when playing */}
+                <div style={{
+                  position: 'absolute',
+                  inset: 0,
+                  borderRadius: '50%',
+                overflow: 'hidden'
+                }}>
               <motion.div 
-                className="absolute inset-0 rounded-full overflow-hidden"
-                animate={{ rotate: isPlaying ? 360 : 0 }}
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      borderRadius: '50%',
+                      overflow: 'hidden',
+                      display: 'flex',
+                      alignItems: 'center',
+                    justifyContent: 'center'
+                    }}
+                initial={false}
+                animate={{ 
+                    rotate: isPlaying ? 360 : 0 
+                }}
                 transition={{ 
                   duration: 40, 
                   ease: "linear", 
                   repeat: isPlaying ? Infinity : 0,
-                  repeatType: "loop" 
+                    repeatType: "loop"
                 }}
               >
+                <div 
+                  className="disc-image-container"
+                  style={{
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden'
+                  }}
+                >
+                  {/* Vinyl record styling - much darker and more visible rings */}
+                  <div style={{
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: '50%',
+                    background: 'radial-gradient(circle at center, rgba(0,0,0,0.7) 18%, rgba(150,150,150,0.7) 18.5%, rgba(95,95,95,0.65) 19%, rgba(30,30,30,0.7) 19.5%, rgba(30,30,30,0.7) 27%, rgba(150,150,150,0.7) 27.5%, rgba(95,95,95,0.65) 28%, rgba(30,30,30,0.7) 28.5%, rgba(30,30,30,0.7) 37%, rgba(150,150,150,0.7) 37.5%, rgba(95,95,95,0.65) 38%, rgba(30,30,30,0.7) 38.5%, rgba(30,30,30,0.7) 47%, rgba(150,150,150,0.7) 47.5%, rgba(95,95,95,0.65) 48%, rgba(30,30,30,0.7) 48.5%, rgba(30,30,30,0.7) 57%, rgba(150,150,150,0.7) 57.5%, rgba(95,95,95,0.65) 58%, rgba(30,30,30,0.7) 58.5%, rgba(30,30,30,0.7) 67%, rgba(150,150,150,0.7) 67.5%, rgba(95,95,95,0.65) 68%, rgba(30,30,30,0.7) 68.5%), linear-gradient(135deg, rgba(30,30,30,0.8) 0%, rgba(15,15,15,0.9) 100%)',
+                    zIndex: 2,
+                    opacity: 1,
+                    mixBlendMode: 'soft-light'
+                  }}></div>
+                  
+                  {/* Center hole - more prominent */}
+                  <div style={{
+                    position: 'absolute',
+                    width: '18%',
+                    height: '18%',
+                    borderRadius: '50%',
+                    background: 'radial-gradient(circle at center, #000 40%, #222)',
+                    border: '2px solid rgba(120,120,120,0.8)',
+                    zIndex: 3,
+                    boxShadow: 'inset 0 0 5px rgba(0,0,0,0.8)'
+                  }}></div>
+                
+                  {/* Darken the image slightly to make rings more visible */}
+                  <div style={{
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                    background: 'rgba(0,0,0,0.32)',
+                    zIndex: 2
+                  }}></div>
+                
                 <Image 
                   src={track.image}
                   alt={track.title}
                   fill
-                  style={{ objectFit: 'cover', objectPosition: 'center' }}
-                  className="opacity-100"
+                  sizes="(max-width: 768px) 80vw, 260px"
+                  style={{ 
+                    objectFit: 'cover', 
+                    objectPosition: 'center',
+                    transform: 'scale(1.2)',
+                    zIndex: 1,
+                    mixBlendMode: 'lighten'
+                  }}
                   priority
-                  unoptimized
                 />
+                </div>
               </motion.div>
               
-              {/* Inner disc with grooves - spinning only when playing */}
-              <motion.div 
-                className="absolute inset-0 rounded-full bg-black/30 backdrop-blur-none"
-                animate={{ rotate: isPlaying ? 360 : 0 }}
-                transition={{ 
-                  duration: 40, 
-                  ease: "linear", 
-                  repeat: isPlaying ? Infinity : 0,
-                  repeatType: "loop" 
-                }}
-              >
-                {/* Vinyl grooves */}
-                <div className="absolute inset-0 rounded-full">
-                  <div className="absolute inset-[15px] rounded-full border border-[#444]/70"></div>
-                  <div className="absolute inset-[30px] rounded-full border border-[#444]/70"></div>
-                  <div className="absolute inset-[45px] rounded-full border border-[#444]/70"></div>
-                  <div className="absolute inset-[60px] rounded-full border border-[#444]/70"></div>
-                  <div className="absolute inset-[75px] rounded-full border border-[#444]/70"></div>
-                  <div className="absolute inset-[90px] rounded-full border border-[#444]/70"></div>
-                  <div className="absolute inset-[105px] rounded-full border border-[#444]/70"></div>
-                  <div className="absolute inset-[120px] rounded-full border border-[#444]/70"></div>
-                </div>
-                
-                {/* Center button */}
-                <div className="absolute inset-0 m-auto w-32 h-32 rounded-full bg-black flex items-center justify-center">
+                {/* Center play button */}
+                    <div style={{
+                      position: 'absolute',
+                      inset: 0,
+                      margin: 'auto',
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '50%',
+                      backgroundColor: 'black',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                  zIndex: 5
+                    }}>
                   <motion.button
-                    className="w-24 h-24 rounded-full bg-black flex items-center justify-center hover:bg-black/70 transition-colors"
+                    style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      backgroundColor: 'black',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={handlePlay}
-                    transition={{ duration: 0.5 }}
                   >
                     {isLoading ? (
-                      <div className="w-8 h-8 border-2 border-[#C8A97E] border-t-transparent rounded-full animate-spin"></div>
+                      <div 
+                        style={{ 
+                          width: '20px', 
+                          height: '20px', 
+                          borderRadius: '50%',
+                          border: '2px solid #C8A97E',
+                          borderTopColor: 'transparent',
+                          animation: 'spin 1s linear infinite'
+                        }}
+                      ></div>
                     ) : isPlaying ? (
-                      <Pause className="w-8 h-8 text-[#C8A97E]" />
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {/* Matching pause icon style for consistency */}
+                        <div style={{ 
+                          display: 'flex', 
+                          width: '14px', 
+                          justifyContent: 'space-between' 
+                        }}>
+                          <div style={{ 
+                            width: '5px', 
+                            height: '16px', 
+                            backgroundColor: '#C8A97E', 
+                            borderRadius: '1px' 
+                          }}></div>
+                          <div style={{ 
+                            width: '5px', 
+                            height: '16px', 
+                            backgroundColor: '#C8A97E', 
+                            borderRadius: '1px' 
+                          }}></div>
+                        </div>
+                      </div>
                     ) : (
-                      <Play className="w-9 h-9 text-[#C8A97E] ml-1" />
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {/* Solid shape play icon */}
+                        <div style={{ 
+                          width: 0,
+                          height: 0,
+                          borderTop: '9px solid transparent',
+                          borderLeft: '16px solid #C8A97E',
+                          borderBottom: '9px solid transparent',
+                          marginLeft: '3px'
+                        }}></div>
+                      </div>
                     )}
                   </motion.button>
                 </div>
-              </motion.div>
             </div>
           </motion.div>
+          </div>
         </div>
         
         {/* Track title and artist */}
@@ -263,49 +502,97 @@ export default function EnhancedMusicPlayer() {
           <h3 className="text-xl font-medium text-white mb-1">{track.title}</h3>
           <p className="text-sm text-[#C8A97E]">{track.artist}</p>
         </div>
-      </div>
+        </div>
+        
+      {/* Fixed fallback minibar - redesigned for better mobile appearance */}
+      {isPlaying && showMiniPlayer && (
+          <div 
+          id="fixed-fallback-minibar"
+          className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-5 py-3 bg-black/95 rounded-full shadow-lg"
+            style={{ 
+            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(200, 169, 126, 0.2)',
+              maxWidth: '90%',
+            width: 'auto',
+            minWidth: '180px',
+            animation: 'fadeInMiniPlayer 0.4s ease-out',
+            transition: 'opacity 0.3s ease, transform 0.3s ease',
+            isolation: 'isolate',
+            contain: 'layout style paint',
+              backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            willChange: 'transform, opacity',
+            transform: 'translate3d(-50%, 0, 0)',
+            zIndex: 9900
+          }}
+          onClick={() => sectionRef.current?.scrollIntoView({ behavior: 'smooth' })}
+        >
+          <div className="flex-1 text-white text-sm font-medium truncate">{track.title}</div>
+          <button
+            className="w-9 h-9 rounded-full bg-[#C8A97E] flex items-center justify-center shrink-0"
+            style={{
+              transition: 'transform 0.2s ease',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.3)'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+            onClick={(e) => {
+              e.stopPropagation();
+              handlePlay();
+            }}
+          >
+            {/* Mobile-optimized pause icon with absolute positioning */}
+            <div style={{ 
+              position: 'relative',
+              width: '18px',
+              height: '14px'
+            }}>
+              <div style={{ 
+                position: 'absolute',
+                left: '2px',
+                width: '5px',
+                height: '14px', 
+                backgroundColor: 'black', 
+                borderRadius: '1px'
+              }}></div>
+              <div style={{ 
+                position: 'absolute',
+                right: '2px',
+                width: '5px',
+                height: '14px', 
+                backgroundColor: 'black', 
+                borderRadius: '1px'
+              }}></div>
+            </div>
+            </button>
+          </div>
+        )}
       
-      {/* Hidden audio element */}
-      <audio
-        ref={audioRef}
-        onEnded={handleEnded}
-        onError={handleError}
-        preload="auto"
-        className="hidden"
-      />
-      
-      {/* Show any error messages */}
+      {/* Error message */}
       {error && (
         <div className="text-red-500 mt-4 text-center">
           {error}
         </div>
       )}
-
-      {/* Floating Mini Player */}
-      <AnimatePresence>
-        {showMiniPlayer && isPlaying && (
-          <motion.div 
-            className="fixed bottom-6 right-6 z-50 flex items-center space-x-2 bg-black/80 backdrop-blur-lg rounded-full p-2 pl-4 pr-3 shadow-2xl border border-[#C8A97E]/20"
-            initial={{ y: 80, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 80, opacity: 0 }}
-            transition={{ duration: 0.7, ease: "easeInOut" }}
-          >
-            <div className="flex items-center space-x-3 cursor-pointer">
-              <Music className="w-5 h-5 text-[#C8A97E]" />
-              <div className="text-white text-sm">{track.title}</div>
-            </div>
-            <motion.button
-              className="w-8 h-8 rounded-full bg-[#C8A97E]/10 hover:bg-[#C8A97E]/20 flex items-center justify-center transition-colors"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={handlePlay}
-            >
-              <Pause className="w-4 h-4 text-[#C8A97E]" />
-            </motion.button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      
+      {/* Test marker */}
+      <div style={{ 
+        position: 'absolute', 
+        top: '10px', 
+        right: '10px', 
+        width: '12px', 
+        height: '12px', 
+        backgroundColor: testMarker,
+        border: '2px solid white',
+        borderRadius: '50%',
+        zIndex: 9999
+      }}></div>
+      
+      {/* Animation keyframes */}
+      <style jsx global>{`
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 } 

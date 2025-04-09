@@ -115,16 +115,16 @@ export default function TestimonialSlider() {
   }
 
   return (
-    <section className="py-8 bg-[#040202]">
+    <section className="py-2 bg-[#040202]">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-8"
+          className="text-center mb-2"
         >
-          <h2 className="section-heading mb-4 text-white">
+          <h2 className="section-heading mb-1 text-white">
             Was meine Schüler sagen
           </h2>
           <div className="w-20 h-0.5 bg-[#C8A97E] mx-auto"></div>
@@ -142,23 +142,23 @@ export default function TestimonialSlider() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
-              className="bg-black/30 rounded-xl p-10 backdrop-blur-sm h-[400px] flex items-center"
+              className="bg-black/30 rounded-xl p-6 backdrop-blur-sm h-[280px] flex items-center"
             >
                 <div className="flex flex-col items-center text-center w-full h-full">
-                <div className="w-20 h-20 rounded-full overflow-hidden mb-4 border-2 border-[#C8A97E]/20 shrink-0">
+                <div className="w-14 h-14 rounded-full overflow-hidden mb-2 border-2 border-[#C8A97E]/20 shrink-0">
                   <Image
                     src={testimonials[page].image}
                     alt={testimonials[page].name}
                     width={80}
                     height={80}
-                        className="w-full h-full object-cover"
+                    className="w-full h-full object-cover"
                     onError={() => setImageError(true)}
-                      />
-                    </div>
-                <div className="max-w-2xl mx-auto mb-6 flex-1 flex items-center justify-center h-[180px] overflow-y-auto scrollbar-thin scrollbar-thumb-[#C8A97E]/40 scrollbar-track-transparent hover:scrollbar-thumb-[#C8A97E]/60">
+                  />
+                </div>
+                <div className="max-w-2xl mx-auto mb-3 flex-1 flex items-center justify-center h-[120px] overflow-y-auto scrollbar-thin scrollbar-thumb-[#C8A97E]/40 scrollbar-track-transparent hover:scrollbar-thumb-[#C8A97E]/60">
                   <p className="text-gray-300 text-lg italic px-4">"{testimonials[page].content}"</p>
                 </div>
-                <div className="flex flex-col items-center mt-auto pt-4 shrink-0">
+                <div className="flex flex-col items-center mt-auto pt-2 shrink-0">
                   <cite className="text-[#C8A97E] font-medium not-italic">
                     {testimonials[page].name}
                   </cite>

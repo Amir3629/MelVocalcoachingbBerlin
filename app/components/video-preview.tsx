@@ -48,15 +48,13 @@ export default function VideoPreview() {
     }
   }, [])
   
-  // Stop playing when another media starts
+  // Enhanced coordination with music player
   useEffect(() => {
     if (currentlyPlaying === 'music' && isPlaying) {
-      if (videoRef.current) {
-        videoRef.current.pause()
-        setIsPlaying(false)
-      }
+      videoRef.current?.pause();
+      setIsPlaying(false);
     }
-  }, [currentlyPlaying, isPlaying])
+  }, [currentlyPlaying, isPlaying]);
 
   const handleLoadStart = () => {
     setIsLoading(true)
@@ -75,18 +73,25 @@ export default function VideoPreview() {
 
   const handlePlayPause = () => {
     if (isPlaying) {
-      videoRef.current?.pause()
-      setIsPlaying(false)
-      setCurrentlyPlaying(null)
+      videoRef.current?.pause();
+      setIsPlaying(false);
+      setCurrentlyPlaying(null);
     } else {
-      if (currentlyPlaying === 'music') {
-        stopAllMedia()
-      }
+      // Stop any playing music first
+      stopAllMedia();
+      
+      // Then play our video
       videoRef.current?.play()
-      setIsPlaying(true)
-      setCurrentlyPlaying('video')
+        .then(() => {
+          setIsPlaying(true);
+          setCurrentlyPlaying('video');
+        })
+        .catch(err => {
+          console.error('Error playing video:', err);
+          setHasError(true);
+        });
     }
-  }
+  };
 
   const handleMuteToggle = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -96,19 +101,25 @@ export default function VideoPreview() {
   }
 
   return (
-    <div className="relative w-full max-w-[240px] mx-auto aspect-[3/4] bg-black rounded-[32px] overflow-hidden">
-      <video
-        ref={videoRef}
-        className="w-full h-full object-cover"
-        playsInline
-        loop
-        muted={isMuted}
-        onLoadStart={handleLoadStart}
-        onLoadedData={handleLoadedData}
-        onError={handleError}
-        poster={process.env.NODE_ENV === 'production' ? '/vocal-coaching/images/preview-poster.webp' : '/images/preview-poster.webp'}
-        src={process.env.NODE_ENV === 'production' ? '/vocal-coaching/videos/preview.mp4' : '/videos/preview.mp4'}
-      />
+    <div 
+      className="relative mx-auto aspect-[3/4] bg-black overflow-hidden" 
+      style={{ width: "168px", borderRadius: "22px" }}
+    >
+      <div className="absolute inset-0 flex items-center justify-center bg-neutral-900">
+        <video
+          ref={videoRef}
+          className="max-h-full object-contain"
+          style={{ width: "auto", height: "100%", maxWidth: "100%" }}
+          playsInline
+          loop
+          muted={isMuted}
+          onLoadStart={handleLoadStart}
+          onLoadedData={handleLoadedData}
+          onError={handleError}
+          poster={process.env.NODE_ENV === 'production' ? '/vocal-coaching/images/preview-poster.webp' : '/images/preview-poster.webp'}
+          src={process.env.NODE_ENV === 'production' ? '/vocal-coaching/videos/preview.mp4' : '/videos/preview.mp4'}
+        />
+      </div>
 
       {/* Dark overlay with play button */}
       <div 
@@ -116,44 +127,47 @@ export default function VideoPreview() {
         onClick={handlePlayPause}
       >
         <button 
-          className="w-12 h-12 flex items-center justify-center rounded-full bg-[#C8A97E] hover:bg-[#B69A6E] transition-colors"
+          className="flex items-center justify-center rounded-full bg-[#C8A97E] hover:bg-[#B69A6E] transition-colors"
+          style={{ width: "32px", height: "32px" }}
           aria-label="Play video"
         >
-          <svg className="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M8 5v14l11-7z" />
-          </svg>
+          {/* Smaller play triangle with stronger contrast */}
+          <div 
+            className="video-play-triangle"
+            style={{ 
+              width: 0,
+              height: 0,
+              borderTop: '6px solid transparent',
+              borderLeft: '10px solid black',
+              borderBottom: '6px solid transparent',
+              marginLeft: '2px'
+            }}
+          ></div>
         </button>
       </div>
 
       {/* Loading state */}
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/80">
-          <div className="w-8 h-8 border-2 border-[#C8A97E] border-t-transparent rounded-full animate-spin"></div>
+          <div style={{ width: "20px", height: "20px" }} className="border-2 border-[#C8A97E] border-t-transparent rounded-full animate-spin"></div>
         </div>
       )}
 
       {/* Error state */}
       {hasError && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/80">
-          <p className="text-[#C8A97E]">Video konnte nicht geladen werden</p>
+          <p className="text-[#C8A97E] text-xs px-2 text-center">Video konnte nicht geladen werden</p>
         </div>
       )}
 
       {/* Mute/Unmute button */}
       <button
         onClick={handleMuteToggle}
-        className="absolute bottom-4 right-4 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors"
+        className={`absolute bottom-3 right-3 p-0 transition-opacity hover:opacity-75 focus:outline-none ${isPlaying ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
       >
-        {isMuted ? (
-          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
-          </svg>
-        ) : (
-          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-          </svg>
-        )}
+        <span className="text-white text-sm block video-mute-icon">
+          {isMuted ? '🔇' : '🔊'}
+        </span>
       </button>
     </div>
   )

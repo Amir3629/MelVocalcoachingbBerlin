@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
+  reactStrictMode: false,
   output: 'export',
   images: {
     unoptimized: true,
@@ -17,8 +18,8 @@ const nextConfig = {
       }
     ],
   },
-  basePath: process.env.NODE_ENV === 'production' ? '/vocal-coachingg' : '',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/vocal-coachingg/' : '',
+  basePath: '/MelVocalcoachingbBerlin',
+  assetPrefix: '/MelVocalcoachingbBerlin/',
   trailingSlash: true,
   webpack: (config) => {
     config.module.rules.push({
@@ -30,11 +31,6 @@ const nextConfig = {
   publicRuntimeConfig: {
     basePath: process.env.NODE_ENV === 'production' ? '/vocal-coachingg' : '',
   },
-  onBuildEnd: async () => {
-    const fs = require('fs');
-    const path = require('path');
-    fs.writeFileSync(path.join(__dirname, 'out', '.nojekyll'), '');
-  }
 }
 
 module.exports = nextConfig

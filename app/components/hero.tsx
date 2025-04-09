@@ -9,29 +9,54 @@ export default function Hero() {
   const { t } = useTranslation()
 
   return (
-    <section className="relative min-h-[100svh] flex items-center justify-center text-white overflow-hidden">
+    <section 
+      className="relative w-full min-h-screen overflow-hidden"
+      style={{
+        margin: 0,
+        padding: 0,
+        width: '100vw',
+        maxWidth: '100vw',
+        left: 0,
+        right: 0,
+        boxSizing: 'border-box'
+      }}
+    >
       {/* Background Video */}
-      <video
-        autoPlay
-        loop
-        muted
+      <video 
+        autoPlay 
+        loop 
+        muted 
         playsInline
-        className="absolute inset-0 w-full h-full object-cover"
-        poster="/images/hero-poster.jpg"
+        className="absolute inset-0 w-full h-full object-cover z-0"
+        poster="/images/preview-poster.webp"
+        style={{
+          width: '100vw',
+          maxWidth: '100vw',
+          left: 0,
+          right: 0
+        }}
       >
         <source src="/videos/hero-bg.mp4" type="video/mp4" />
       </video>
 
       {/* Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
+      <div 
+        className="absolute inset-0 w-full h-full bg-gradient-to-b from-black/60 via-black/50 to-black/70 z-10"
+        style={{
+          width: '100vw',
+          maxWidth: '100vw',
+          left: 0,
+          right: 0
+        }}
+      ></div>
 
       {/* Content */}
-      <div className="container mx-auto relative z-10 px-4 md:px-6">
+      <div className="relative flex items-center justify-center w-full h-full z-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-center max-w-4xl mx-auto"
+          className="text-center max-w-4xl mx-auto px-4 md:px-6"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
@@ -59,34 +84,12 @@ export default function Hero() {
             href="#services"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="button-text inline-flex items-center justify-center bg-[#C8A97E] text-black px-6 md:px-8 py-3 rounded-full transition-colors hover:bg-[#D4B88F] min-w-[160px] md:min-w-[200px]"
+            className="button-text inline-flex items-center justify-center bg-[#C8A97E] text-black px-6 md:px-8 py-3 rounded-full transition-colors hover:bg-[#D4B88F] min-w-[160px] md:min-w-[200px] mt-8"
           >
             {t('hero.cta')}
           </motion.a>
         </motion.div>
       </div>
-
-      {/* Scroll Indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1, duration: 1 }}
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 hidden md:block"
-      >
-        <motion.div
-          animate={{
-            y: [0, 10, 0],
-          }}
-          transition={{
-            duration: 1.5,
-            repeat: Infinity,
-            repeatType: "loop",
-          }}
-          className="w-6 h-10 border-2 border-white/50 rounded-full p-1"
-        >
-          <div className="w-1 h-2 bg-white/50 rounded-full mx-auto" />
-        </motion.div>
-      </motion.div>
     </section>
   )
 } 

@@ -10,6 +10,7 @@ import LanguageSwitcher from "./language-switcher"
 import { useTranslation } from 'react-i18next'
 import '../../lib/i18n'
 import { Menu, X } from 'lucide-react'
+import '../styles/header-scroll.css'
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
@@ -18,6 +19,7 @@ export default function Navigation() {
   const router = useRouter()
   const { currentLang } = useLanguage()
   const { t } = useTranslation()
+  const menuButtonRef = React.useRef<HTMLButtonElement>(null)
 
   // Force re-render when language changes
   useEffect(() => {
@@ -68,46 +70,44 @@ export default function Navigation() {
     }
   }, [])
 
+  // Make menu button clickable regardless of scroll position
+  useEffect(() => {
+    const handleTouchStart = (e: TouchEvent) => {
+      const menuBtn = menuButtonRef.current
+      if (!menuBtn) return
+      
+      // Get button position
+      const rect = menuBtn.getBoundingClientRect()
+      // Check if touch is within button area (with extra padding for easier tapping)
+      const touchX = e.touches[0].clientX
+      const touchY = e.touches[0].clientY
+      const padding = 10 // Extra padding around the button in pixels
+      
+      if (
+        touchX >= rect.left - padding &&
+        touchX <= rect.right + padding &&
+        touchY >= rect.top - padding &&
+        touchY <= rect.bottom + padding
+      ) {
+        e.preventDefault()
+        setIsOpen(prev => !prev)
+      }
+    }
+    
+    // Add global touch event listener
+    document.addEventListener('touchstart', handleTouchStart, { passive: false })
+    
+    return () => {
+      document.removeEventListener('touchstart', handleTouchStart)
+    }
+  }, [])
+
   const toggleMenu = () => {
-    setIsOpen(!isOpen)
-    document.body.style.overflow = !isOpen ? "hidden" : "unset"
+    setIsOpen(!isOpen);
   }
 
   const closeMenu = () => {
-    setIsOpen(false)
-    document.body.style.overflow = "unset"
-  }
-
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, link: { href: string }) => {
-    e.preventDefault()
-    closeMenu()
-
-    if (link.href.startsWith('/') && !link.href.startsWith('/#')) {
-      // Direct page navigation
-      router.push(link.href)
-      return
-    }
-
-    // Handle hash navigation
-    const hash = link.href.split('#')[1]
-    if (!hash) return
-
-    // Get the element to scroll to
-    const element = document.getElementById(hash)
-    if (element) {
-      // Use scrollIntoView with smoother settings
-      const headerOffset = 80; // Adjust this value based on your header height
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-      
-      // Use requestAnimationFrame for smoother scrolling
-      requestAnimationFrame(() => {
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
-      });
-    }
+    setIsOpen(false);
   }
 
   const handleLogoClick = (e: React.MouseEvent) => {
@@ -135,110 +135,276 @@ export default function Navigation() {
     scrollToTop()
   }
 
+  // Function to restore scroll position after menu closes
+  const restoreScrollPosition = (scrollY: string) => {
+    if (scrollY) {
+      const position = parseInt(scrollY || '0') * -1;
+      window.scrollTo(0, position);
+    }
+  }
+
+  // Function to scroll to an element with better positioning
+  const scrollToElement = (id: string) => {
+    const element = document.getElementById(id);
+    if (!element) return;
+    
+    // Get window width for mobile detection
+    const isMobile = window.innerWidth < 768;
+    
+    // Calculate position to show the element in the viewport
+    const elementRect = element.getBoundingClientRect();
+    const absoluteElementTop = elementRect.top + window.pageYOffset;
+    const headerHeight = isMobile ? 70 : 80; // Smaller offset for mobile
+    
+    // Calculate a better position that shows more of the element in view
+    const elementHeight = elementRect.height;
+    const windowHeight = window.innerHeight;
+    
+    let scrollPosition;
+    
+    // Custom positioning for different sections
+    switch(id) {
+      case 'testimonials':
+        // For testimonials, position to show more of the testimonial content
+        scrollPosition = absoluteElementTop - 50;
+        break;
+        
+      case 'services':
+        // Services might need to be seen from the top
+        scrollPosition = absoluteElementTop + 35;
+        break;
+        
+      case 'contact':
+        // Move down to show the contact form
+        scrollPosition = absoluteElementTop + 50;
+        break;
+        
+      case 'about':
+        // About section should show more content
+        scrollPosition = absoluteElementTop + 50;
+        break;
+        
+      case 'references':
+        // References section should be positioned to show more content
+        scrollPosition = absoluteElementTop + 50;
+        break;
+        
+      default:
+        // Default behavior for any other sections
+        scrollPosition = absoluteElementTop + 50;
+    }
+    
+    // Smooth scroll to the calculated position
+    window.scrollTo({
+      top: scrollPosition,
+      behavior: 'smooth'
+    });
+  }
+
   return (
-    <header 
-      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${
-        isScrolled ? 'bg-black/40 backdrop-blur-lg' : 'bg-transparent'
-      }`}
-    >
-      <div className="container mx-auto">
-        <div className="flex items-center justify-between h-[var(--header-height-mobile)] md:h-[var(--header-height)]">
-          <Link 
-            href="/" 
-            onClick={handleLogoClick}
-            className="relative w-20 md:w-28 h-8 md:h-10 transition-all duration-300"
-          >
-            <div className="relative w-full h-full scale-110">
-              <Image
-                src={logoPath}
-                alt="Mel jazz"
-                fill
-                className="object-contain brightness-0 invert hover:opacity-80 transition-opacity"
-                priority
-                data-i18n="logo.alt"
-              />
-            </div>
-          </Link>
+    <>
+      <style jsx global>{`
+        /* Override any previous header styles to ensure our animation works */
+        header.main-header {
+          background-color: transparent !important;
+          box-shadow: none !important;
+          backdrop-filter: none !important;
+          -webkit-backdrop-filter: none !important;
+        }
 
-          {/* Desktop Menu */}
-          <nav className="hidden md:flex items-center space-x-6 lg:space-x-8">
-            {links.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                onClick={(e) => handleLinkClick(e, link)}
-                className="text-sm font-medium tracking-wider uppercase text-white hover:text-[#C8A97E] transition-all duration-300 no-underline after:hidden"
-                data-i18n={link.label}
-              >
-                {t(link.label)}
-              </Link>
-            ))}
-            <LanguageSwitcher />
-          </nav>
+        /* The sliding background element */
+        .sliding-header-bg {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: black;
+          transform: translateY(-100%);
+          transition: transform 0.5s ease-out;
+          z-index: 1;
+          opacity: 0.7;
+        }
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={toggleMenu}
-            className="md:hidden text-white focus:outline-none p-2 -mr-2"
-            aria-label={t(isOpen ? 'nav.close' : 'nav.menu')}
-            data-i18n={isOpen ? 'nav.close' : 'nav.menu'}
-          >
-            <div className="w-6 h-6 relative transform transition-all duration-300">
-              <span className={`absolute h-0.5 w-full bg-current transform transition-all duration-300 ${
-                isOpen ? 'rotate-45 translate-y-0' : '-translate-y-2'
-              }`} />
-              <span className={`absolute h-0.5 w-full bg-current transform transition-all duration-300 ${
-                isOpen ? 'opacity-0' : 'opacity-100'
-              }`} />
-              <span className={`absolute h-0.5 w-full bg-current transform transition-all duration-300 ${
-                isOpen ? '-rotate-45 translate-y-0' : 'translate-y-2'
-              }`} />
-            </div>
-          </button>
-        </div>
-      </div>
+        /* Active state when scrolled */
+        header.main-header.scrolled .sliding-header-bg {
+          transform: translateY(0);
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
 
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="md:hidden fixed inset-0 bg-black/95 backdrop-blur-sm pt-[var(--header-height-mobile)]"
-          >
-            <nav className="flex flex-col items-center justify-center min-h-screen -mt-[var(--header-height-mobile)] px-6">
-              {links.map((link, index) => (
-                <motion.div
+        /* Ensure content stays above the animation */
+        header.main-header .header-content {
+          position: relative; 
+          z-index: 2;
+        }
+        
+        /* Always make header area clickable even when transparent */
+        header.main-header::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: var(--header-height-mobile);
+          z-index: 1;
+          pointer-events: auto;
+        }
+        
+        @media (min-width: 768px) {
+          header.main-header::before {
+            height: var(--header-height);
+          }
+        }
+      `}</style>
+      
+      <header className={`fixed top-0 left-0 right-0 z-[100] main-header ${isScrolled ? 'scrolled' : ''}`}>
+        {/* Our custom sliding background */}
+        <div className="sliding-header-bg"></div>
+        
+        {/* Header content */}
+        <div className="container mx-auto header-content">
+          <div className="flex items-center justify-between h-[var(--header-height-mobile)] md:h-[var(--header-height)]">
+            <Link 
+              href="/" 
+              onClick={handleLogoClick}
+              className="relative w-20 md:w-28 h-8 md:h-10 transition-all duration-300"
+            >
+              <div className="relative w-full h-full scale-110">
+                <Image
+                  src={logoPath}
+                  alt="Mel jazz"
+                  fill
+                  className="object-contain brightness-0 invert hover:opacity-80 transition-opacity"
+                  priority
+                  data-i18n="logo.alt"
+                />
+              </div>
+            </Link>
+
+            {/* Desktop Menu */}
+            <nav className="hidden md:flex items-center space-x-6 lg:space-x-8">
+              {links.map((link) => (
+                <a
                   key={link.label}
+                  href={link.href}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    
+                    // Handle direct navigation
+                    if (link.href.startsWith('/') && !link.href.startsWith('/#')) {
+                      router.push(link.href);
+                      return;
+                    }
+                    
+                    // Handle hash navigation with custom scrolling function
+                    const hash = link.href.split('#')[1];
+                    if (hash) {
+                      scrollToElement(hash);
+                    }
+                  }}
+                  className="text-sm font-medium tracking-wider uppercase text-white hover:text-[#C8A97E] transition-all duration-300 no-underline after:hidden"
+                  data-i18n={link.label}
+                >
+                  {t(link.label)}
+                </a>
+              ))}
+              <LanguageSwitcher />
+            </nav>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={toggleMenu}
+              className="md:hidden text-white focus:outline-none p-2 mr-1 relative z-[9900] group"
+              aria-label={t(isOpen ? 'nav.close' : 'nav.menu')}
+              ref={menuButtonRef}
+            >
+              <div className="w-7 h-7 relative transform transition-all duration-300 flex items-center justify-center">
+                <span className={`absolute h-[2px] w-5 bg-current transform transition-all duration-300 ${
+                  isOpen ? 'rotate-45 translate-y-0 bg-[#C8A97E]' : '-translate-y-1.5 group-hover:bg-[#C8A97E]'
+                }`} />
+                <span className={`absolute h-[2px] w-5 bg-current transform transition-all duration-300 ${
+                  isOpen ? 'opacity-0 w-0' : 'opacity-100 group-hover:bg-[#C8A97E]'
+                }`} />
+                <span className={`absolute h-[2px] w-5 bg-current transform transition-all duration-300 ${
+                  isOpen ? '-rotate-45 translate-y-0 bg-[#C8A97E]' : 'translate-y-1.5 group-hover:bg-[#C8A97E]'
+                }`} />
+              </div>
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="md:hidden fixed inset-0 bg-black/90 pt-[var(--header-height-mobile)] mobile-menu-container"
+              style={{ 
+                zIndex: 9800,
+                backdropFilter: 'blur(10px) !important',
+                WebkitBackdropFilter: 'blur(10px) !important',
+                overflowY: 'auto',
+                overflowX: 'hidden',
+                touchAction: 'none',
+                backgroundImage: 'radial-gradient(circle at center, rgba(200, 169, 126, 0.1) 0%, transparent 70%)'
+              }}
+              id="mobile-navigation-menu"
+            >
+              <nav className="flex flex-col items-center justify-center min-h-[85vh] -mt-[calc(var(--header-height-mobile)_+_1rem)] px-8">
+                <div className="w-full max-w-xs">
+                  {links.map((link, index) => (
+                    <motion.div
+                      key={link.label}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="w-full my-4"
+                    >
+                      <a
+                        href={link.href}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          
+                          // First close the menu
+                          setIsOpen(false);
+                          
+                          // Get the target hash
+                          const hash = link.href.split('#')[1];
+                          if (hash) {
+                            // Use the scroll helper with a small delay to allow menu to close first
+                            setTimeout(() => {
+                              const element = document.getElementById(hash);
+                              if (element) {
+                                scrollToElement(hash);
+                              }
+                            }, 150);
+                          }
+                        }}
+                        className="group text-xl font-medium tracking-wider uppercase text-white hover:text-[#C8A97E] transition-all duration-300 no-underline block py-3 text-center w-full relative overflow-hidden"
+                        data-i18n={link.label}
+                      >
+                        <span className="relative z-10">{t(link.label)}</span>
+                        <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#C8A97E] transition-all duration-500 group-hover:w-full"></span>
+                      </a>
+                    </motion.div>
+                  ))}
+                </div>
+                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="w-full"
+                  transition={{ delay: links.length * 0.1 }}
+                  className="mt-16"
                 >
-                  <Link
-                    href={link.href}
-                    onClick={(e) => handleLinkClick(e, link)}
-                    className="text-base md:text-lg font-medium tracking-wider uppercase text-white hover:text-[#C8A97E] transition-all duration-300 no-underline after:hidden block py-4 text-center w-full border-b border-white/10"
-                    data-i18n={link.label}
-                  >
-                    {t(link.label)}
-                  </Link>
+                  <LanguageSwitcher />
                 </motion.div>
-              ))}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: links.length * 0.1 }}
-                className="mt-8"
-              >
-                <LanguageSwitcher />
-              </motion.div>
-            </nav>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </header>
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </header>
+    </>
   )
-} 
+}

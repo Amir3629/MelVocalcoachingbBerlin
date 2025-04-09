@@ -93,6 +93,7 @@ export default function ServicesSection() {
     <section 
       id="services" 
       ref={ref}
+      data-section-id="services"
       className="py-20 md:py-24 lg:py-28 bg-black relative"
     >
       <div className="container mx-auto px-4">
@@ -133,7 +134,7 @@ export default function ServicesSection() {
             </ul>
           </motion.div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 max-w-6xl mx-auto px-0 sm:px-0">
             {services.map((service, index) => {
               const details = getDetails(service.key);
               return (

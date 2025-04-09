@@ -1,31 +1,31 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import React from 'react'
 import ClientProvider from './client-provider'
 import Footer from './footer'
 import CookieConsent from './cookie-consent'
 
-interface RootClientProps {
+export default function RootClient({
+  children,
+  className,
+}: {
   children: React.ReactNode
-  className?: string
-}
-
-export default function RootClient({ children, className }: RootClientProps) {
-  const [mounted, setMounted] = useState(false)
-
-  // Use effect to handle any client-side operations
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  // Only render children after client-side mount to prevent hydration mismatch
-  if (!mounted) {
-    return <div className={className} style={{ visibility: 'hidden' }}></div>
-  }
-
+  className: string
+}) {
   return (
     <ClientProvider>
-      <div className={className}>
+      <div 
+        className={className} 
+        style={{ 
+          margin: 0,
+          padding: 0,
+          width: '100vw',
+          maxWidth: '100vw',
+          overflowX: 'hidden',
+          boxSizing: 'border-box',
+          position: 'relative'
+        }}
+      >
         {children}
         <Footer />
         <CookieConsent />

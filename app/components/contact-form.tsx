@@ -82,7 +82,7 @@ export default function ContactForm() {
         }
       `}</style>
       
-      <section id="contact" className="relative min-h-screen py-12">
+      <section className="relative min-h-screen py-12">
         {/* Background */}
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black">

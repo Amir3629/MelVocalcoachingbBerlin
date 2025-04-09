@@ -18,7 +18,7 @@ interface GalleryImage {
 
 const images: GalleryImage[] = [
   {
-    src: '/images/gallery/performance1.jpg',
+    src: process.env.NODE_ENV === 'production' ? '/MelVocalcoachingbBerlin/images/gallery/performance1.jpg' : '/images/gallery/performance1.jpg',
     alt: "Live Performance im B-Flat Jazz Club",
     span: "col-span-1 md:col-span-2",
     description: "Live Performance im B-Flat Jazz Club",
@@ -26,7 +26,7 @@ const images: GalleryImage[] = [
     location: "Berlin-Mitte"
   },
   {
-    src: '/images/gallery/performance2.jpg',
+    src: process.env.NODE_ENV === 'production' ? '/MelVocalcoachingbBerlin/images/gallery/performance2.jpg' : '/images/gallery/performance2.jpg',
     alt: "Aufnahmesession im Studio",
     span: "col-span-1",
     description: "Aufnahmesession im Studio",
@@ -34,7 +34,7 @@ const images: GalleryImage[] = [
     location: "Recording Studio Berlin"
   },
   {
-    src: '/images/gallery/performance3.jpg',
+    src: process.env.NODE_ENV === 'production' ? '/MelVocalcoachingbBerlin/images/gallery/performance3.jpg' : '/images/gallery/performance3.jpg',
     alt: "Live Concert",
     span: "col-span-1",
     description: "Jazz Festival Auftritt",
@@ -42,7 +42,7 @@ const images: GalleryImage[] = [
     location: "Jazztage Berlin"
   },
   {
-    src: '/images/gallery/performance4.jpg',
+    src: process.env.NODE_ENV === 'production' ? '/MelVocalcoachingbBerlin/images/gallery/performance4.jpg' : '/images/gallery/performance4.jpg',
     alt: "Teaching Session",
     span: "col-span-1 md:col-span-2",
     description: "Gesangsunterricht & Workshop",
@@ -50,7 +50,7 @@ const images: GalleryImage[] = [
     location: "Vocal Studio"
   },
   {
-    src: '/images/gallery/performance5.jpg',
+    src: process.env.NODE_ENV === 'production' ? '/MelVocalcoachingbBerlin/images/gallery/performance5.jpg' : '/images/gallery/performance5.jpg',
     alt: "Piano Performance",
     span: "col-span-1 md:col-span-2",
     description: "Piano & Vocal Performance",
@@ -58,7 +58,7 @@ const images: GalleryImage[] = [
     location: "Jazz Club Berlin"
   },
   {
-    src: '/images/gallery/performance6.jpg',
+    src: process.env.NODE_ENV === 'production' ? '/MelVocalcoachingbBerlin/images/gallery/performance6.jpg' : '/images/gallery/performance6.jpg',
     alt: "Stage Performance",
     span: "col-span-1 md:col-span-2",
     description: "Live Konzert mit Band",
@@ -66,7 +66,7 @@ const images: GalleryImage[] = [
     location: "Konzerthaus Berlin"
   },
   {
-    src: '/images/gallery/performance7.jpg',
+    src: process.env.NODE_ENV === 'production' ? '/MelVocalcoachingbBerlin/images/gallery/performance7.jpg' : '/images/gallery/performance7.jpg',
     alt: "Vocal Workshop",
     span: "col-span-1",
     description: "Vocal Workshop Session",
@@ -74,7 +74,7 @@ const images: GalleryImage[] = [
     location: "Studio Berlin"
   },
   {
-    src: '/images/gallery/performance8.jpg',
+    src: process.env.NODE_ENV === 'production' ? '/MelVocalcoachingbBerlin/images/gallery/performance8.jpg' : '/images/gallery/performance8.jpg',
     alt: "Jazz Club",
     span: "col-span-1",
     description: "Jazz Club Performance",
@@ -82,7 +82,7 @@ const images: GalleryImage[] = [
     location: "A-Trane Berlin"
   },
   {
-    src: '/images/gallery/performance9.jpg',
+    src: process.env.NODE_ENV === 'production' ? '/MelVocalcoachingbBerlin/images/gallery/performance9.jpg' : '/images/gallery/performance9.jpg',
     alt: "Concert Performance",
     span: "col-span-1 md:col-span-2",
     description: "Jazz Concert Evening",
@@ -95,6 +95,7 @@ export default function GallerySection() {
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null)
   const [mounted, setMounted] = useState(false)
   const [isImageLoaded, setIsImageLoaded] = useState(false)
+  const [bgOpacity, setBgOpacity] = useState(0)
 
   useEffect(() => {
     setMounted(true)
@@ -102,36 +103,89 @@ export default function GallerySection() {
   }, [])
 
   const handleImageClick = (image: GalleryImage) => {
-    // Preload the image before showing modal
+    // Preload the image before showing modal for smoother transition
     const img = new Image()
     img.src = image.src
     img.onload = () => {
       setIsImageLoaded(true)
       document.documentElement.style.overflow = 'hidden'
       setSelectedImage(image)
+      // Start with opacity 0 and animate to full opacity
+      setBgOpacity(0)
+      setTimeout(() => setBgOpacity(0.95), 10)
     }
   }
 
   const handleClose = () => {
-    setSelectedImage(null)
-    setIsImageLoaded(false)
+    // Apply smooth fade-out transition
+    const imageElement = document.getElementById('gallery-modal-image')
+    if (imageElement) {
+      imageElement.classList.remove('opacity-100')
+      imageElement.classList.add('opacity-0')
+    }
+    
+    // Fade out the background slowly
+    setBgOpacity(0)
+    
     setTimeout(() => {
+      setSelectedImage(null)
+      setIsImageLoaded(false)
       document.documentElement.style.overflow = ''
-    }, 300)
+    }, 700) // Match the transition duration
   }
 
   const handlePrev = () => {
     if (selectedImage === null) return
-    const currentIndex = images.findIndex(img => img.src === selectedImage.src)
-    const prevIndex = (currentIndex - 1 + images.length) % images.length
-    setSelectedImage(images[prevIndex])
+    
+    // Apply smooth fade transition
+    const imageElement = document.getElementById('gallery-modal-image')
+    if (imageElement) {
+      imageElement.classList.remove('opacity-100')
+      imageElement.classList.add('opacity-0')
+      
+      setTimeout(() => {
+        const currentIndex = images.findIndex(img => img.src === selectedImage.src)
+        const prevIndex = (currentIndex - 1 + images.length) % images.length
+        
+        // Preload the next image
+        const nextImg = new Image()
+        nextImg.src = images[prevIndex].src
+        nextImg.onload = () => {
+          setSelectedImage(images[prevIndex])
+        }
+      }, 150) // Half the transition duration for quicker response
+    } else {
+      const currentIndex = images.findIndex(img => img.src === selectedImage.src)
+      const prevIndex = (currentIndex - 1 + images.length) % images.length
+      setSelectedImage(images[prevIndex])
+    }
   }
 
   const handleNext = () => {
     if (selectedImage === null) return
-    const currentIndex = images.findIndex(img => img.src === selectedImage.src)
-    const nextIndex = (currentIndex + 1) % images.length
-    setSelectedImage(images[nextIndex])
+    
+    // Apply smooth fade transition
+    const imageElement = document.getElementById('gallery-modal-image')
+    if (imageElement) {
+      imageElement.classList.remove('opacity-100')
+      imageElement.classList.add('opacity-0')
+      
+      setTimeout(() => {
+        const currentIndex = images.findIndex(img => img.src === selectedImage.src)
+        const nextIndex = (currentIndex + 1) % images.length
+        
+        // Preload the next image
+        const nextImg = new Image()
+        nextImg.src = images[nextIndex].src
+        nextImg.onload = () => {
+          setSelectedImage(images[nextIndex])
+        }
+      }, 150) // Half the transition duration for quicker response
+    } else {
+      const currentIndex = images.findIndex(img => img.src === selectedImage.src)
+      const nextIndex = (currentIndex + 1) % images.length
+      setSelectedImage(images[nextIndex])
+    }
   }
 
   const handleKeyDown = (e: KeyboardEvent) => {
@@ -149,101 +203,89 @@ export default function GallerySection() {
     }
   }, [selectedImage])
 
+  // Add a useEffect to handle image transitions
+  useEffect(() => {
+    if (selectedImage) {
+      // Already handled by setting opacity directly on the image element
+      setIsImageLoaded(true)
+    }
+  }, [selectedImage])
+
   const renderModal = () => {
     if (!selectedImage) return null
 
     return (
       <>
-        <motion.div
-          className="fixed inset-0 bg-black/90 z-[998]"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+        {/* Background with smooth fade transition */}
+        <div
+          className="fixed inset-0 bg-black z-[998] transition-opacity duration-700 ease-in-out"
           onClick={handleClose}
+          style={{ opacity: bgOpacity }}
         />
 
-        <motion.div
-          className="fixed inset-0 z-[999] flex items-center justify-center p-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+        <div
+          className="fixed inset-0 z-[999] flex items-center justify-center p-4 transition-opacity duration-500"
           onClick={handleClose}
         >
+          {/* Arrow icons positioned closer to image frame */}
           <div className="relative w-full max-w-4xl mx-auto">
-            <motion.div
-              className="relative w-full"
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
+            {/* Left arrow - positioned just outside the image */}
+            <div 
+              className="absolute -left-12 top-1/2 -translate-y-1/2 z-[1005] text-[#C8A97E] hover:text-white cursor-pointer transition-colors duration-300"
+              onClick={(e) => {
+                e.stopPropagation();
+                handlePrev();
+              }}
+              aria-label="Previous image"
             >
-              <button 
-                className="absolute -left-12 top-1/2 transform -translate-y-1/2 text-white/70 hover:text-white p-1.5 rounded-full transition-colors duration-300 z-[1000] hover:bg-black/30"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handlePrev();
-                }}
-                aria-label="Previous image"
-              >
-                <ChevronLeft size={24} />
-              </button>
-
+              <ChevronLeft size={40} strokeWidth={2.5} />
+            </div>
+            
+            {/* Right arrow - positioned just outside the image */}
+            <div 
+              className="absolute -right-12 top-1/2 -translate-y-1/2 z-[1005] text-[#C8A97E] hover:text-white cursor-pointer transition-colors duration-300"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleNext();
+              }}
+              aria-label="Next image"
+            >
+              <ChevronRight size={40} strokeWidth={2.5} />
+            </div>
+            
+            {/* Smooth animation container for image */}
+            <div className="relative w-full transition-all duration-500 ease-in-out" onClick={(e) => e.stopPropagation()}>
               <div className="relative w-full flex items-center justify-center overflow-hidden">
-                <div 
-                  className="w-full flex items-center justify-center"
-                  style={{ 
-                    perspective: '1000px',
-                    WebkitPerspective: '1000px'
-                  }}
-                >
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={selectedImage.src}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -20 }}
-                      transition={{ duration: 0.3, ease: "easeInOut" }}
-                    >
-                      <picture>
-                        <source srcSet={selectedImage.src} type="image/jpeg" />
-                        <img
-                          src={selectedImage.src}
-                          alt={selectedImage.alt}
-                          className="max-w-full max-h-[75vh] h-auto rounded-lg select-none"
-                          style={{
-                            objectFit: 'contain',
-                            backfaceVisibility: 'hidden',
-                            WebkitBackfaceVisibility: 'hidden',
-                            transform: 'translate3d(0, 0, 0)',
-                            WebkitTransform: 'translate3d(0, 0, 0)',
-                            imageRendering: 'crisp-edges',
-                            filter: 'none',
-                            WebkitFilter: 'none'
-                          }}
-                          draggable={false}
-                          loading="eager"
-                          decoding="sync"
-                          onLoad={() => setIsImageLoaded(true)}
-                        />
-                      </picture>
-                    </motion.div>
-                  </AnimatePresence>
+                <div className="w-full flex items-center justify-center">
+                  <picture>
+                    <source srcSet={selectedImage.src} type="image/jpeg" />
+                    <img
+                      id="gallery-modal-image"
+                      src={selectedImage.src}
+                      alt={selectedImage.alt}
+                      className="max-w-full max-h-[75vh] h-auto rounded-xl select-none transition-opacity duration-700 opacity-0"
+                      style={{
+                        objectFit: 'contain'
+                      }}
+                      draggable={false}
+                      loading="eager"
+                      onLoad={(e) => {
+                        setIsImageLoaded(true)
+                        // Add a slight delay before showing the image for smoother effect
+                        setTimeout(() => {
+                          if (e.target && e.target instanceof HTMLImageElement) {
+                            e.target.classList.remove('opacity-0')
+                            e.target.classList.add('opacity-100')
+                          }
+                        }, 50)
+                      }}
+                    />
+                  </picture>
                 </div>
               </div>
-
-              <button 
-                className="absolute -right-12 top-1/2 transform -translate-y-1/2 text-white/70 hover:text-white p-1.5 rounded-full transition-colors duration-300 z-[1000] hover:bg-black/30"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleNext();
-                }}
-                aria-label="Next image"
-              >
-                <ChevronRight size={24} />
-              </button>
-            </motion.div>
+            </div>
           </div>
-        </motion.div>
+        </div>
       </>
     )
   }
@@ -262,28 +304,37 @@ export default function GallerySection() {
           <div className="w-12 h-0.5 bg-[#C8A97E] mx-auto"></div>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5 lg:gap-6 max-w-7xl mx-auto">
           {images.map((image, index) => (
             <motion.div
               key={image.src}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: index * 0.2 }}
-              className="relative aspect-square rounded-lg overflow-hidden cursor-pointer group"
+              transition={{ duration: 0.8, delay: index * 0.1 }}
+              className={`relative rounded-xl overflow-hidden cursor-pointer group gallery-item ${image.span}`}
+              style={{ 
+                willChange: 'transform',
+                minHeight: '250px',
+                height: image.span.includes('md:col-span-2') ? '300px' : '250px',
+              }}
               onClick={() => handleImageClick(image)}
+              whileTap={{ scale: 1.05 }}
             >
               <AppImage
                 src={image.src}
                 alt={image.alt}
                 fill
-                className="object-cover transition-transform duration-300 group-hover:scale-105"
-                sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 30vw"
+                className="object-cover transition-transform duration-400 ease-out group-hover:scale-105"
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                loading="lazy"
               />
-              <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute inset-x-0 bottom-0 p-4 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                  <h3 className="text-white text-base font-medium mb-1 line-clamp-1">{image.alt}</h3>
-                  <p className="text-gray-300 text-sm line-clamp-2">{image.description}</p>
+              <div className="absolute inset-0 border-2 border-transparent group-active:border-[#C8A97E] rounded-xl transition-colors duration-300"></div>
+              
+              <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-400">
+                <div className="absolute inset-x-0 bottom-0 p-4 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-400">
+                  <h3 className="text-white text-base md:text-lg font-medium mb-1 line-clamp-1">{image.alt}</h3>
+                  <p className="text-gray-300 text-sm md:text-base line-clamp-2">{image.description}</p>
                 </div>
               </div>
             </motion.div>
@@ -291,9 +342,7 @@ export default function GallerySection() {
         </div>
 
         {mounted && createPortal(
-          <AnimatePresence mode="wait">
-            {selectedImage && isImageLoaded && renderModal()}
-          </AnimatePresence>,
+          selectedImage && isImageLoaded && renderModal(),
           document.body
         )}
       </div>

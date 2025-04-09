@@ -37,7 +37,8 @@ export default function Home() {
   
   const { scrollYProgress } = useScroll({
     target: parallaxRef,
-    offset: ["start start", "end start"]
+    offset: ["start start", "end start"],
+    layoutEffect: false
   })
 
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"])
@@ -105,16 +106,16 @@ export default function Home() {
 
   useEffect(() => {
     // Verify that all sections are properly rendered
-    const sections = ['hero', 'services', 'about', 'testimonials', 'contact']
+    const sections = ['hero', 'services', 'about', 'references', 'testimonials', 'contact'];
+    
+    // Silent check for section existence
     sections.forEach(id => {
-      const element = document.getElementById(id)
+      const element = document.getElementById(id);
       if (!element) {
-        console.error(`Section with id "${id}" not found`)
-      } else {
-        console.log(`Section with id "${id}" found`)
+        console.error(`Section with id "${id}" not found!`);
       }
-    })
-  }, [isLoaded])
+    });
+  }, [isLoaded]);
 
   useEffect(() => {
     // Prevent automatic scrolling back to top
@@ -124,7 +125,10 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[#0A0A0A]">
+    <main className="flex flex-col min-h-screen bg-black text-white overflow-x-hidden">
+      {/* Test marker - REMOVE AFTER TESTING */}
+      {/* <div className="test-marker"></div> */}
+      
       <Navigation />
 
       {/* Hero Section with Parallax Piano Background */}
@@ -168,7 +172,7 @@ export default function Home() {
           >
             <Button 
               size="lg" 
-              className="bg-[#C8A97E] hover:bg-[#B89A6F] text-black border-2 border-[#C8A97E] hover:border-[#B89A6F] rounded-full px-8 transition-all duration-300"
+              className="bg-[#C8A97E] hover:bg-[#B89A6F] text-black border-2 border-[#C8A97E] hover:border-[#B89A6F] rounded-full px-8 transition-all duration-300 sm:w-auto w-[160px] mx-auto"
               onClick={() => {
                 const element = document.getElementById("services")
                 if (element) {
@@ -183,10 +187,10 @@ export default function Home() {
       </section>
 
       {/* Music Player Section */}
-      <section className="py-10 px-4 bg-[#040202]">
+      <section className="py-6 px-4 bg-[#040202]">
         <div className="max-w-7xl mx-auto">
           <motion.div 
-            className="text-center mb-6"
+            className="text-center mb-4"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -198,16 +202,16 @@ export default function Home() {
       </section>
 
       {/* Video Preview Section */}
-      <section className="pt-4 pb-16 px-4 bg-[#040202]">
+      <section className="pt-2 pb-8 px-4 bg-[#040202]">
         <div className="max-w-7xl mx-auto">
           <motion.div 
-            className="text-center mb-12"
+            className="text-center mb-6"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
           >
-            <h2 className="section-heading mb-4 text-white">Video Preview</h2>
+            <h2 className="section-heading mb-2 text-white">Video Preview</h2>
             <div className="w-24 h-0.5 bg-[#C8A97E] mx-auto opacity-80 mt-2"></div>
           </motion.div>
           <VideoPreview />
@@ -215,34 +219,41 @@ export default function Home() {
       </section>
 
       {/* Services Section */}
-      <section id="services" className="relative w-full py-16 bg-[#040202]">
-        <div className="absolute inset-0 w-full h-full overflow-hidden">
+      <section id="services" className="relative w-full py-10 bg-[#040202] overflow-hidden">
+        <div className="absolute inset-0 w-full h-full">
           <AppImage
             src="/images/backgrounds/services-bg.jpg"
             alt="Services Background"
             fill
-            className="object-cover opacity-50"
+            className="object-cover opacity-50" 
             style={{
               transition: 'transform 5s ease-in-out, opacity 5s ease-in-out',
-              transform: 'scale(1.01)' // Very slight scale to prevent any visible edges
+              transform: 'scale(1.05)', // Scale to cover edges
+              objectPosition: 'center center',
+              maxWidth: 'none' // Override max-width constraints
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#040202]/80 via-[#040202]/60 to-[#040202]/80" 
+          {/* Multiple gradient layers for better edge coverage */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#040202]/90 via-[#040202]/60 to-[#040202]/90" 
                style={{ transition: 'opacity 5s ease-in-out' }} />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_40%,_#040202_90%)] opacity-80"
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_40%,_#040202_90%)] opacity-90"
+               style={{ transition: 'opacity 5s ease-in-out' }} />
+          
+          {/* Right edge gradient fix */}
+          <div className="absolute top-0 bottom-0 right-0 w-[5%] bg-gradient-to-l from-[#040202] to-transparent opacity-100"
                style={{ transition: 'opacity 5s ease-in-out' }} />
         </div>
 
         <div className="container mx-auto px-4 relative z-10">
-          <div className="text-center mb-16">
+          <div className="text-center mb-8">
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7 }}
-              className="text-center mb-12"
+              className="text-center mb-6"
             >
-              <h2 className="section-heading mb-4 text-white">Vocal Excellence</h2>
+              <h2 className="section-heading mb-2 text-white">Vocal Excellence</h2>
               <div className="w-24 h-0.5 bg-[#C8A97E] mx-auto opacity-80 mt-2"></div>
             </motion.div>
           </div>
@@ -374,7 +385,7 @@ export default function Home() {
           </div>
 
           <motion.div 
-            className="text-center mt-16"
+            className="text-center mt-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -382,7 +393,7 @@ export default function Home() {
           >
             <Button 
               size="lg"
-              className="bg-[#C8A97E] hover:bg-[#B89A6F] text-black rounded-full px-8"
+              className="bg-[#C8A97E] hover:bg-[#B89A6F] text-black rounded-full px-8 sm:w-auto w-[160px] mx-auto border-2 border-[#C8A97E] hover:border-[#B89A6F] transition-all duration-300"
               onClick={() => setIsBookingModalOpen(true)}
             >
               Jetzt Buchen
@@ -405,16 +416,16 @@ export default function Home() {
       `}</style>
 
       {/* References Section */}
-      <section className="py-8 bg-[#040202]">
+      <section id="references" className="py-4 bg-[#040202]">
         <GallerySection />
         <Collaborations />
       </section>
 
       {/* Expertise Cards Section */}
-      <section className="bg-black py-6">
+      <section className="bg-black py-2 pb-0">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-6">
-            <h2 className="section-heading mb-4 text-white">Faszinierend <span className="amp">&</span> Musikalisch</h2>
+          <div className="text-center mb-2">
+            <h2 className="section-heading mb-1 text-white">Faszinierend <span className="amp">&</span> Musikalisch</h2>
             <div className="w-24 h-0.5 bg-[#C8A97E] mx-auto opacity-80 mt-2"></div>
           </div>
           <FlipCards />
@@ -429,12 +440,12 @@ export default function Home() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="relative py-16 bg-[#040202]">
+      <section id="contact" className="relative py-8 bg-[#040202]">
         <ContactForm />
       </section>
 
       <BookingForm isOpen={isBookingModalOpen} onClose={() => setIsBookingModalOpen(false)} />
-    </div>
+    </main>
   )
 }
 

@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
-import { Check } from "lucide-react"
+import { Check, ChevronDown } from "lucide-react"
 
 interface ServiceCardProps {
   title: string
@@ -34,6 +34,7 @@ export default function ServiceCard({
   link
 }: ServiceCardProps) {
   const [isHovered, setIsHovered] = useState(false)
+  const [isTouched, setIsTouched] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
 
@@ -45,10 +46,19 @@ export default function ServiceCard({
     setIsHovered(false)
   }
 
+  const handleTouchStart = () => {
+    setIsTouched(true)
+  }
+
+  const handleTouchEnd = () => {
+    setIsTouched(false)
+  }
+
   // Animation variants for the card
   const cardVariants = {
     collapsed: { 
       height: 320,
+      scale: 1,
       transition: {
         duration: 1.2,
         ease: [0.4, 0, 0.2, 1]
@@ -56,6 +66,7 @@ export default function ServiceCard({
     },
     expanded: { 
       height: "auto",
+      scale: 1.02,
       transition: { 
         duration: 1.2,
         ease: [0.4, 0, 0.2, 1]
@@ -87,37 +98,64 @@ export default function ServiceCard({
       className="group relative w-full bg-black/20 backdrop-blur-sm rounded-xl overflow-hidden"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
       variants={cardVariants}
-      animate={isHovered ? "expanded" : "collapsed"}
+      animate={(isHovered || isTouched) ? "expanded" : "collapsed"}
+      style={{
+        borderRadius: "0.75rem",
+        WebkitTransform: "translateZ(0)",
+        WebkitBackfaceVisibility: "hidden",
+        width: "100%",
+        margin: 0,
+        padding: 0,
+        overflow: "hidden",
+        transformOrigin: "center center",
+        willChange: "transform, height",
+        position: "relative",
+        ...(image && {
+          backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('${image}')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          boxShadow: '0 4px 30px rgba(0,0,0,0.5)',
+          isolation: 'isolate'
+        })
+      }}
     >
-      {image && (
-        <div className="absolute inset-0 w-full h-full will-change-transform">
-          <div className="absolute inset-0 overflow-hidden w-full h-full">
-            <Image
-              src={image}
-              alt={title}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover opacity-40"
-              style={{
-                filter: isHovered ? 'none' : 'blur(1px)',
-                transition: "filter 0.8s ease-out",
-                transform: "translateZ(0)",
-                backfaceVisibility: "hidden"
-              }}
-              priority={delay === 0}
-              loading={delay === 0 ? "eager" : "lazy"}
-              quality={90}
-            />
-          </div>
-          <div 
-            className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/80"
-          />
-        </div>
-      )}
+      {/* Arrow indicator */}
+      <motion.div
+        className="absolute bottom-4 right-4 text-[#C8A97E]"
+        animate={{
+          y: [0, 4, 0],
+          opacity: [0.6, 1, 0.6],
+          rotate: (isHovered || isTouched) ? 180 : 0
+        }}
+        transition={{
+          y: {
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut"
+          },
+          opacity: {
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut"
+          },
+          rotate: {
+            duration: 1.2,
+            ease: [0.4, 0, 0.2, 1]
+          }
+        }}
+        style={{
+          transformOrigin: 'center'
+        }}
+      >
+        <ChevronDown className="w-6 h-6 drop-shadow-lg" />
+      </motion.div>
 
-      <div className="relative p-6 flex flex-col">
-        <div className="flex items-start gap-3 mb-4">
+      <div className="relative p-4 sm:p-6 flex flex-col">
+        <div className="flex items-start gap-3 mb-3 sm:mb-4">
           {icon && (
             <div className="text-[#C8A97E]">
               {icon}
@@ -129,15 +167,31 @@ export default function ServiceCard({
           </div>
         </div>
 
-        <p className="text-sm text-gray-300 mb-6">{description}</p>
+        <style jsx>{`
+          .gold-bullet li {
+            position: relative;
+            padding-left: 20px;
+          }
+          .gold-bullet li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 8px;
+            width: 6px;
+            height: 6px;
+            background-color: #C8A97E;
+            border-radius: 50%;
+          }
+        `}</style>
 
-        <ul className="space-y-2 mb-6">
+        <p className="text-sm text-gray-300 mb-4 sm:mb-6">{description}</p>
+
+        <ul className="space-y-3 mb-4 sm:mb-6 gold-bullet">
           {features.map((feature, index) => (
             <li
               key={index}
-              className="flex items-center gap-2 text-white/90"
+              className="text-white/90"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#C8A97E]" />
               <span className="text-sm">{feature}</span>
             </li>
           ))}
@@ -147,7 +201,7 @@ export default function ServiceCard({
           {details && isHovered && (
             <motion.div 
               ref={contentRef}
-              className="mt-auto space-y-4"
+              className="mt-auto space-y-3 sm:space-y-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -167,17 +221,17 @@ export default function ServiceCard({
                     </span>
                     {" "}Enthält
                   </motion.h4>
-                  <ul className="grid grid-cols-2 gap-2">
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 pl-1 gold-bullet">
                     {details.includes.map((item, index) => (
                       <motion.li
                         key={index}
-                        className="text-white/90 text-sm"
+                        className="text-white/90"
                         variants={textVariants}
                         initial="hidden"
                         animate="visible"
                         custom={index + 1}
                       >
-                        • {item}
+                        <span className="text-sm">{item}</span>
                       </motion.li>
                     ))}
                   </ul>
@@ -198,17 +252,17 @@ export default function ServiceCard({
                     </span>
                     {" "}Geeignet für
                   </motion.h4>
-                  <ul className="grid grid-cols-2 gap-2">
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 pl-1 gold-bullet">
                     {details.suitable.map((item, index) => (
                       <motion.li
                         key={index}
-                        className="text-white/90 text-sm"
+                        className="text-white/90"
                         variants={textVariants}
                         initial="hidden"
                         animate="visible"
                         custom={index + (details.includes ? details.includes.length + 2 : 1)}
                       >
-                        • {item}
+                        <span className="text-sm">{item}</span>
                       </motion.li>
                     ))}
                   </ul>
@@ -216,7 +270,7 @@ export default function ServiceCard({
               )}
 
               <motion.div 
-                className="grid grid-cols-2 gap-4 pt-4 border-t border-white/10"
+                className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pt-3 sm:pt-4 border-t border-white/10"
                 variants={textVariants}
                 initial="hidden"
                 animate="visible"
@@ -227,8 +281,8 @@ export default function ServiceCard({
               >
                 {details.duration && (
                   <div>
-                    <p className="text-[#C8A97E] text-xs mb-1">
-                      <span className="inline-block">
+                    <p className="text-[#C8A97E] text-xs mb-1 flex items-center">
+                      <span className="inline-block mr-1">
                         ⏱️
                       </span>
                       {" "}Dauer
@@ -238,8 +292,8 @@ export default function ServiceCard({
                 )}
                 {details.location && (
                   <div>
-                    <p className="text-[#C8A97E] text-xs mb-1">
-                      <span className="inline-block">
+                    <p className="text-[#C8A97E] text-xs mb-1 flex items-center">
+                      <span className="inline-block mr-1">
                         📍
                       </span>
                       {" "}Ort
