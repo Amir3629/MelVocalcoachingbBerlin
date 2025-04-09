@@ -29,7 +29,7 @@ const nextConfig = {
     return config
   },
   publicRuntimeConfig: {
-    basePath: process.env.NODE_ENV === 'production' ? '/vocal-coachingg' : '',
+    basePath: '/MelVocalcoachingbBerlin',
   },
 }
 
