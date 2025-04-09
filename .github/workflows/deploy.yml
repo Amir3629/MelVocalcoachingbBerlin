@@ -20,7 +20,7 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Delete backup folders
         run: |
@@ -32,21 +32,26 @@ jobs:
         env:
           NODE_ENV: production
 
-      - name: Add 404 file
+      - name: Prepare for GitHub Pages
         run: |
-          cp 404.html out/404.html
-      
-      - name: Copy build files to docs folder
-        run: |
+          # Create clean docs directory
+          rm -rf docs
           mkdir -p docs
+          
+          # Copy build output to docs
           cp -r out/* docs/
+          
+          # Add necessary files for GitHub Pages
           touch docs/.nojekyll
-          cp 404.html docs/404.html
+          cp 404.html docs/404.html || echo "No 404.html found"
 
-      - name: Commit and push docs folder
+      - name: Configure Git
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
+
+      - name: Commit and push docs folder
+        run: |
           git add docs
           git commit -m "Deploy to GitHub Pages" || echo "No changes to commit"
           git push 
