@@ -8,8 +8,8 @@ try {
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
-  basePath: process.env.NODE_ENV === 'production' ? '/vocal-coaching' : '',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/vocal-coaching/' : '',
+  basePath: '',
+  assetPrefix: '',
   trailingSlash: true,
   compress: true,
   poweredByHeader: false,

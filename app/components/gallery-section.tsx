@@ -18,7 +18,7 @@ interface GalleryImage {
 
 const images: GalleryImage[] = [
   {
-    src: '/vocal-coaching/images/gallery/performance1.jpg',
+    src: '/images/gallery/performance1.jpg',
     alt: "Live Performance im B-Flat Jazz Club",
     span: "col-span-1 md:col-span-2",
     description: "Live Performance im B-Flat Jazz Club",
@@ -26,7 +26,7 @@ const images: GalleryImage[] = [
     location: "Berlin-Mitte"
   },
   {
-    src: '/vocal-coaching/images/gallery/performance2.jpg',
+    src: '/images/gallery/performance2.jpg',
     alt: "Aufnahmesession im Studio",
     span: "col-span-1",
     description: "Aufnahmesession im Studio",
@@ -34,7 +34,7 @@ const images: GalleryImage[] = [
     location: "Recording Studio Berlin"
   },
   {
-    src: '/vocal-coaching/images/gallery/performance3.jpg',
+    src: '/images/gallery/performance3.jpg',
     alt: "Live Concert",
     span: "col-span-1",
     description: "Jazz Festival Auftritt",
@@ -42,7 +42,7 @@ const images: GalleryImage[] = [
     location: "Jazztage Berlin"
   },
   {
-    src: '/vocal-coaching/images/gallery/performance4.jpg',
+    src: '/images/gallery/performance4.jpg',
     alt: "Teaching Session",
     span: "col-span-1 md:col-span-2",
     description: "Gesangsunterricht & Workshop",
@@ -50,7 +50,7 @@ const images: GalleryImage[] = [
     location: "Vocal Studio"
   },
   {
-    src: '/vocal-coaching/images/gallery/performance5.jpg',
+    src: '/images/gallery/performance5.jpg',
     alt: "Piano Performance",
     span: "col-span-1 md:col-span-2",
     description: "Piano & Vocal Performance",
@@ -58,7 +58,7 @@ const images: GalleryImage[] = [
     location: "Jazz Club Berlin"
   },
   {
-    src: '/vocal-coaching/images/gallery/performance6.jpg',
+    src: '/images/gallery/performance6.jpg',
     alt: "Stage Performance",
     span: "col-span-1 md:col-span-2",
     description: "Live Konzert mit Band",
@@ -66,7 +66,7 @@ const images: GalleryImage[] = [
     location: "Konzerthaus Berlin"
   },
   {
-    src: '/vocal-coaching/images/gallery/performance7.jpg',
+    src: '/images/gallery/performance7.jpg',
     alt: "Vocal Workshop",
     span: "col-span-1",
     description: "Vocal Workshop Session",
@@ -74,7 +74,7 @@ const images: GalleryImage[] = [
     location: "Studio Berlin"
   },
   {
-    src: '/vocal-coaching/images/gallery/performance8.jpg',
+    src: '/images/gallery/performance8.jpg',
     alt: "Jazz Club",
     span: "col-span-1",
     description: "Jazz Club Performance",
@@ -82,7 +82,7 @@ const images: GalleryImage[] = [
     location: "A-Trane Berlin"
   },
   {
-    src: '/vocal-coaching/images/gallery/performance9.jpg',
+    src: '/images/gallery/performance9.jpg',
     alt: "Concert Performance",
     span: "col-span-1 md:col-span-2",
     description: "Jazz Concert Evening",

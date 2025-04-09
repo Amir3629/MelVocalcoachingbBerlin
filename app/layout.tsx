@@ -75,13 +75,13 @@ export default function RootLayout({
       <head>
         <link 
           rel="icon" 
-          href={process.env.NODE_ENV === 'production' ? '/vocal-coaching/images/logo/ml-logo.PNG' : '/images/logo/ml-logo.PNG'} 
+          href="/images/logo/ml-logo.PNG" 
           sizes="64x64" 
           type="image/png" 
         />
         <link 
           rel="apple-touch-icon" 
-          href={process.env.NODE_ENV === 'production' ? '/vocal-coaching/images/logo/ml-logo.PNG' : '/images/logo/ml-logo.PNG'} 
+          href="/images/logo/ml-logo.PNG" 
           sizes="180x180" 
         />
         
