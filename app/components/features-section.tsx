@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Mic, Music, Star, Flask } from 'lucide-react';
+import { Mic, Music, Star, Settings } from 'lucide-react';
 
 export default function FeaturesSection() {
   const { t } = useTranslation();
@@ -11,21 +11,21 @@ export default function FeaturesSection() {
   const features = [
     {
       icon: <Mic className="w-10 h-10 text-[#C8A97E]" />,
-      title: "Deine Stimme, Verstärkt",
-      description: "Entdecke dein volles Potenzial"
+      title: "Einzigartige Stimme",
+      description: "Die Kreation einer Signature-Stimme"
     },
     {
       icon: <Music className="w-10 h-10 text-[#C8A97E]" />,
-      title: "Das Geheimnis des Jazz-Flüsterers",
-      description: "Lerne die Kunst der Improvisation"
+      title: "Maßgeschneiderte Technik",
+      description: "Stimmbildung die genau zu Ihrem Stil passt"
     },
     {
       icon: <Star className="w-10 h-10 text-[#C8A97E]" />,
-      title: "Bühnenphysik 101",
-      description: "Deine Stimme ist klüger als gedacht"
+      title: "Authentischer Ausdruck",
+      description: "Persönlicher und authentischer Sound"
     },
     {
-      icon: <Flask className="w-10 h-10 text-[#C8A97E]" />,
+      icon: <Settings className="w-10 h-10 text-[#C8A97E]" />,
       title: "Stimmliche Alchemie",
       description: "Die 4-Uhr-Wahrheiten des stimmlichen Erfolgs"
     }
