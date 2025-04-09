@@ -26,6 +26,11 @@ jobs:
         run: |
           rm -rf backup-restore mobile-clone mobile-site mobile-version restored-site
 
+      - name: Rename backup files to prevent build issues
+        run: |
+          find app -name '*-backup.tsx' -type f -exec mv {} {}.bak \;
+          find app -name '*-backup.ts' -type f -exec mv {} {}.bak \;
+
       - name: Build
         run: |
           npm run build

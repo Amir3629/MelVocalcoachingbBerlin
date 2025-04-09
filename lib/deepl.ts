@@ -57,7 +57,7 @@ export async function translateObject(obj: any, targetLang: string): Promise<any
     
     // If object is an array, translate each item
     if (Array.isArray(obj)) {
-      const results = [];
+      const results: any[] = [];
       for (const item of obj) {
         results.push(await translateObject(item, targetLang));
       }

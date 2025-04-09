@@ -120,7 +120,7 @@ export default function MusicPlayer() {
   useEffect(() => {
     // Always show the current song and 3 discs on each side when dragging
     // Otherwise only show the current disc and one on each side for smooth transitions
-    const indices = [];
+    const indices: number[] = [];
     const totalSongs = songs.length;
     
     // Calculate which disc should be active based on drag

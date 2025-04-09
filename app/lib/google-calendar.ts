@@ -1,6 +1,12 @@
 import { google } from 'googleapis'
 import { format } from 'date-fns'
 
+// Define the TimeSlot interface
+interface TimeSlot {
+  time: string;
+  available: boolean;
+}
+
 // Initialize Google Calendar API
 const calendar = google.calendar('v3')
 
@@ -37,7 +43,7 @@ export async function getAvailableSlots(date: Date) {
     }))
 
     // Generate all possible time slots for the day
-    const allSlots = []
+    const allSlots: TimeSlot[] = []
     const startHour = 9 // 9 AM
     const endHour = 20 // 8 PM
     const slotDuration = 60 // 60 minutes

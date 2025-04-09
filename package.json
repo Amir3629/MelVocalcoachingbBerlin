@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && touch out/.nojekyll && cp .nojekyll out/",
+    "build": "next build && (IF EXIST out\\.nojekyll (echo .nojekyll already exists) ELSE (echo. > out\\.nojekyll))",
     "start": "next start",
     "lint": "next lint",
     "check-images": "node scripts/check-images.js",
