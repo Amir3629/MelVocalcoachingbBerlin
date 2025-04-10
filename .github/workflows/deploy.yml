@@ -29,11 +29,54 @@ jobs:
         
       - name: Create static site
         run: |
-          # Copy the public directory as is to _site
+          # Copy the public directory as is to _site (preserve all subdirectories)
           cp -r public _site
           
           # Add .nojekyll file to bypass Jekyll processing
           touch _site/.nojekyll
+          
+          # Make sure we have the necessary folders and files
+          mkdir -p _site/MelVocalcoachingbBerlin
+          mkdir -p _site/MelVocalcoachingbBerlin/MelVocalcoachingbBerlin
+          
+          # Ensure index.html files exist in all locations
+          if [ ! -f "_site/index.html" ]; then
+            cp _site/MelVocalcoachingbBerlin/index.html _site/index.html
+          fi
+          
+          # Add a redirect root index file if it doesn't exist
+          if [ ! -f "_site/index.html" ]; then
+            cat > _site/index.html << 'EOL'
+            <!DOCTYPE html>
+            <html>
+              <head>
+                <meta charset="UTF-8">
+                <meta http-equiv="refresh" content="0;url=/MelVocalcoachingbBerlin/">
+                <title>Redirecting to Mel Vocal Coaching Berlin</title>
+              </head>
+              <body>
+                <p>Redirecting to <a href="/MelVocalcoachingbBerlin/">Mel Vocal Coaching Berlin</a>...</p>
+              </body>
+            </html>
+            EOL
+          fi
+          
+          # Create the necessary redirect file
+          if [ ! -f "_site/MelVocalcoachingbBerlin/MelVocalcoachingbBerlin/index.html" ]; then
+            cat > _site/MelVocalcoachingbBerlin/MelVocalcoachingbBerlin/index.html << 'EOL'
+            <!DOCTYPE html>
+            <html>
+              <head>
+                <meta charset="UTF-8">
+                <meta http-equiv="refresh" content="0;url=/MelVocalcoachingbBerlin/">
+                <title>Redirecting to Mel Vocal Coaching Berlin</title>
+              </head>
+              <body>
+                <p>Redirecting to <a href="/MelVocalcoachingbBerlin/">Mel Vocal Coaching Berlin</a>...</p>
+              </body>
+            </html>
+            EOL
+          fi
           
           # List all files for debugging
           echo "Files in _site directory:"

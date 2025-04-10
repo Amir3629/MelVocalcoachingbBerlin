@@ -1,85 +1,492 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mel Jazz - Vocal Coaching in Berlin</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-      text-align: center;
-      background-color: #f5f5f5;
-    }
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      background-color: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-    h1 {
-      font-size: 2.5rem;
-      color: #333;
-    }
-    h2 {
-      font-size: 1.5rem;
-      color: #666;
-      margin-bottom: 30px;
-    }
-    .feature {
-      text-align: left;
-      margin-bottom: 20px;
-      padding: 15px;
-      background-color: #f9f9f9;
-      border-radius: 5px;
-    }
-    .button {
-      display: inline-block;
-      background-color: #333;
-      color: white;
-      padding: 12px 30px;
-      text-decoration: none;
-      border-radius: 5px;
-      font-weight: bold;
-      margin: 20px 0;
-    }
-    footer {
-      margin-top: 40px;
-      color: #999;
-    }
-    footer a {
-      color: #666;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mel Jazz - Vocal Coaching in Berlin</title>
+    <link rel="icon" href="/MelVocalcoachingbBerlin/images/logo/ml-logo.PNG" sizes="64x64" type="image/png">
+    <link rel="apple-touch-icon" href="/MelVocalcoachingbBerlin/images/logo/ml-logo.PNG" sizes="180x180">
+    <link rel="manifest" href="/MelVocalcoachingbBerlin/favicon/site.webmanifest">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --color-primary: #C8A97E;
+            --color-primary-hover: #B89A6F;
+            --font-playfair: 'Playfair Display', serif;
+            --font-cormorant: 'Cormorant Garamond', serif;
+            --font-montserrat: 'Montserrat', sans-serif;
+            --font-roboto: 'Roboto', sans-serif;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            overflow-x: hidden !important;
+            width: 100vw;
+            max-width: 100vw;
+            font-family: var(--font-roboto);
+            background-color: #000;
+            color: #fff;
+            scroll-behavior: smooth;
+        }
+        
+        /* Navigation */
+        .navigation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1rem;
+            transition: background-color 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navigation.scrolled {
+            background-color: rgba(0, 0, 0, 0.9);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .logo {
+            height: 50px;
+            width: auto;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--color-primary);
+        }
+        
+        .mobile-menu-button {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('/MelVocalcoachingbBerlin/images/backgrounds/hero-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            z-index: 0;
+        }
+        
+        .hero-bg::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.5), rgba(0,0,0,0.7));
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 0 1rem;
+            max-width: 800px;
+        }
+        
+        .hero-title {
+            font-family: var(--font-playfair);
+            font-size: 3.5rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        
+        .hero-subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 2rem;
+            background-color: var(--color-primary);
+            color: black;
+            border: 2px solid var(--color-primary);
+            border-radius: 9999px;
+            font-size: 1rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background-color: var(--color-primary-hover);
+            border-color: var(--color-primary-hover);
+        }
+        
+        /* Sections */
+        section {
+            padding: 5rem 1rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .section-title {
+            font-family: var(--font-playfair);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .section-divider {
+            width: 6rem;
+            height: 2px;
+            background-color: var(--color-primary);
+            margin: 0 auto;
+            opacity: 0.8;
+        }
+        
+        /* Services Section */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .service-card {
+            background-color: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            padding: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .service-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        
+        .service-description {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-list {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .feature-marker {
+            width: 6px;
+            height: 6px;
+            background-color: var(--color-primary);
+            border-radius: 50%;
+        }
+        
+        /* Footer */
+        .footer {
+            background-color: #0a0a0a;
+            padding: 3rem 1rem;
+            text-align: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-link {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-link:hover {
+            color: var(--color-primary);
+        }
+        
+        .footer-text {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.9rem;
+        }
+        
+        .verification-link {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.3);
+            text-decoration: none;
+            margin-top: 1rem;
+            display: inline-block;
+        }
+        
+        .verification-link:hover {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .mobile-menu-button {
+                display: block;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.25rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Mel Jazz</h1>
-    <h2>Professional Vocal Coaching in Berlin</h2>
-    
-    <div class="feature">
-      <h3>✨ Vocal Technique</h3>
-      <p>Develop your singing skills with personalized vocal coaching from an experienced professional.</p>
-    </div>
-    
-    <div class="feature">
-      <h3>🎵 Jazz and More</h3>
-      <p>Specialize in jazz, pop, soul, or find your own unique style with guided training.</p>
-    </div>
-    
-    <div class="feature">
-      <h3>📅 Flexible Scheduling</h3>
-      <p>Book sessions that fit your schedule with our easy online booking system.</p>
-    </div>
-    
-    <a href="booking/" class="button">Book a Session</a>
-    
-    <footer>
-      <p>&copy; 2025 Mel Jazz Vocal Coaching | <a href="verify.html">Verify Deployment</a></p>
+    <!-- Navigation -->
+    <nav class="navigation" id="navbar">
+        <a href="/MelVocalcoachingbBerlin/" class="logo-link">
+            <img src="/MelVocalcoachingbBerlin/images/logo/ml-logo.PNG" alt="Mel Jazz Logo" class="logo">
+        </a>
+        <div class="nav-links">
+            <a href="#services">Services</a>
+            <a href="#about">About</a>
+            <a href="#testimonials">Testimonials</a>
+            <a href="#contact">Contact</a>
+        </div>
+        <button class="mobile-menu-button">Menu</button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">Mel jazz</h1>
+            <p class="hero-subtitle">Vocal Coaching in Berlin</p>
+            <a href="#services" class="btn">Jetzt Buchen</a>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Our Services</h2>
+                <div class="section-divider"></div>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <h3 class="service-title">Private Vocal Lessons</h3>
+                    <p class="service-description">
+                        Individual coaching tailored to your voice and goals. Learn proper technique, expand your range, and develop your unique sound.
+                    </p>
+                    <ul class="feature-list">
+                        <li class="feature-item">
+                            <div class="feature-marker"></div>
+                            <span>Vocal Technique &amp; Breathing</span>
+                        </li>
+                        <li class="feature-item">
+                            <div class="feature-marker"></div>
+                            <span>Pitch &amp; Rhythm Training</span>
+                        </li>
+                        <li class="feature-item">
+                            <div class="feature-marker"></div>
+                            <span>Style Development</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="service-card">
+                    <h3 class="service-title">Jazz Specialization</h3>
+                    <p class="service-description">
+                        Focus on jazz techniques, improvisation, and interpretation. Develop your jazz vocabulary and scat singing skills.
+                    </p>
+                    <ul class="feature-list">
+                        <li class="feature-item">
+                            <div class="feature-marker"></div>
+                            <span>Jazz Theory &amp; Harmony</span>
+                        </li>
+                        <li class="feature-item">
+                            <div class="feature-marker"></div>
+                            <span>Improvisation Techniques</span>
+                        </li>
+                        <li class="feature-item">
+                            <div class="feature-marker"></div>
+                            <span>Repertoire Building</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="service-card">
+                    <h3 class="service-title">Performance Coaching</h3>
+                    <p class="service-description">
+                        Prepare for auditions, recordings, or live performances. Enhance your stage presence and overcome performance anxiety.
+                    </p>
+                    <ul class="feature-list">
+                        <li class="feature-item">
+                            <div class="feature-marker"></div>
+                            <span>Stage Presence</span>
+                        </li>
+                        <li class="feature-item">
+                            <div class="feature-marker"></div>
+                            <span>Microphone Technique</span>
+                        </li>
+                        <li class="feature-item">
+                            <div class="feature-marker"></div>
+                            <span>Performance Psychology</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">About Mel</h2>
+                <div class="section-divider"></div>
+            </div>
+            <div class="about-content">
+                <p style="text-align: center; max-width: 800px; margin: 0 auto; color: rgba(255, 255, 255, 0.8); line-height: 1.6;">
+                    Mel is a passionate vocal coach and jazz singer based in Berlin. With over 10 years of experience
+                    teaching singers of all levels, Mel specializes in helping students discover their authentic voice
+                    while building solid technique. Her background in jazz performance brings a unique perspective to her
+                    coaching, emphasizing both technical excellence and artistic expression.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Contact</h2>
+                <div class="section-divider"></div>
+            </div>
+            <div style="text-align: center; max-width: 600px; margin: 0 auto;">
+                <p style="margin-bottom: 2rem; color: rgba(255, 255, 255, 0.8);">
+                    Ready to start your vocal journey? Get in touch to schedule a lesson or ask any questions.
+                </p>
+                <a href="mailto:info@meljazz.com" class="btn">Send Email</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="#services" class="footer-link">Services</a>
+            <a href="#about" class="footer-link">About</a>
+            <a href="#contact" class="footer-link">Contact</a>
+        </div>
+        <p class="footer-text">© 2024 Mel Jazz Vocal Coaching. All rights reserved.</p>
+        <a href="/MelVocalcoachingbBerlin/verify.html" class="verification-link">Verify Deployment</a>
     </footer>
-  </div>
+
+    <script>
+        // Simple JavaScript for basic functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle navigation scrolling effect
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+
+            // Handle smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Mobile menu toggle (simplified)
+            const menuButton = document.querySelector('.mobile-menu-button');
+            if (menuButton) {
+                menuButton.addEventListener('click', function() {
+                    alert('Mobile menu functionality would be implemented here.');
+                });
+            }
+        });
+    </script>
 </body>
 </html> 
