@@ -1,0 +1,65 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Delete backup folders
+        run: |
+          rm -rf backup-restore mobile-clone mobile-site mobile-version restored-site
+
+      - name: Rename backup files to prevent build issues
+        run: |
+          find app -name '*-backup.tsx' -type f -exec mv {} {}.bak \;
+          find app -name '*-backup.ts' -type f -exec mv {} {}.bak \;
+
+      - name: Build
+        run: |
+          npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Prepare for GitHub Pages
+        run: |
+          # Create clean docs directory
+          rm -rf docs
+          mkdir -p docs
+          
+          # Copy build output to docs
+          cp -r out/* docs/
+          
+          # Add necessary files for GitHub Pages
+          touch docs/.nojekyll
+          cp 404.html docs/404.html || echo "No 404.html found"
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Commit and push docs folder
+        run: |
+          git add docs
+          git commit -m "Deploy to GitHub Pages" || echo "No changes to commit"
+          git push 
