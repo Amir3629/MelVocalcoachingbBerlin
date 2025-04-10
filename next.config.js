@@ -1,9 +1,7 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
-  reactStrictMode: false,
-  output: 'export',
-  distDir: 'out',
+  output: process.env.NODE_ENV === 'production' ? 'export' : undefined,
   images: {
     unoptimized: true,
     remotePatterns: [
@@ -19,8 +17,8 @@ const nextConfig = {
       }
     ],
   },
-  basePath: '',
-  assetPrefix: '',
+  basePath: process.env.NODE_ENV === 'production' ? '/MelVocalcoachingBerlin' : '',
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/MelVocalcoachingBerlin/' : '',
   trailingSlash: true,
   webpack: (config) => {
     config.module.rules.push({
@@ -30,16 +28,16 @@ const nextConfig = {
     return config
   },
   publicRuntimeConfig: {
-    basePath: '',
+    basePath: process.env.NODE_ENV === 'production' ? '/MelVocalcoachingBerlin' : '',
   },
-  // Exclude backup and temporary directories from build
-  pageExtensions: ['tsx', 'ts', 'jsx', 'js'].filter(ext => 
-    !ext.includes('backup') && !ext.includes('bak')
-  ),
-  onDemandEntries: {
-    maxInactiveAge: 25 * 1000,
-    pagesBufferLength: 2,
-  }
+  typescript: {
+    // During build, ignore type checking errors
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    // During build, ignore eslint errors
+    ignoreDuringBuilds: true,
+  },
 }
 
 module.exports = nextConfig

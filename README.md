@@ -6,8 +6,8 @@ This is a Next.js project for a professional vocal coaching website, featuring a
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/vocal-coaching.git
-   cd vocal-coaching
+   git clone https://github.com/Amir3629/MelVocalcoachingBerlin.git
+   cd MelVocalcoachingBerlin
    ```
 
 2. **Install dependencies**
@@ -36,7 +36,7 @@ This is a Next.js project for a professional vocal coaching website, featuring a
 This project is configured to work with both local development and GitHub Pages deployment:
 
 - **Local Development:** Assets are served from `/public`
-- **Production:** Assets are served from `/vocal-coaching/public`
+- **Production:** Assets are served from `/MelVocalcoachingBerlin/public`
 
 The `getImagePath()` utility automatically handles these differences.
 
@@ -57,6 +57,29 @@ If you see placeholder images in development:
 - `npm run deploy` - Deploy to GitHub Pages
 - `npm run fix-local` - Fix development environment issues
 - `npm run setup` - Complete setup and start dev server
+
+## 📝 GitHub Pages Deployment
+
+The site is configured to deploy automatically to GitHub Pages:
+
+1. **Automatic Deployment**:
+   - Pushes to the `main` branch will trigger deployment
+   - The GitHub Action workflow will build and deploy the site
+
+2. **Manual Deployment**:
+   ```bash
+   npm run deploy
+   ```
+
+3. **Configuration**:
+   - The site is deployed from the `main` branch
+   - HTTPS is enforced automatically
+   - Using the URL: https://amir3629.github.io/MelVocalcoachingBerlin
+
+4. **Troubleshooting**:
+   - If assets don't load, check browser console for 404 errors
+   - Ensure image paths are relative using the utility functions
+   - The `.nojekyll` file is added automatically to prevent Jekyll processing
 
 ## 📝 Booking System
 

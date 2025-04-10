@@ -3,63 +3,53 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - master
+      - main
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/checkout@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: "18"
           cache: 'npm'
-
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+        with:
+          static_site_generator: next
       - name: Install dependencies
-        run: npm install
+        run: npm ci
+      - name: Build with Next.js
+        run: npm run build:gh-pages
+      - name: Create .nojekyll file
+        run: touch ./out/.nojekyll
+      - name: Copy public directory contents to out
+        run: cp -r ./public/* ./out/
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./out
 
-      - name: Delete backup folders
-        run: |
-          rm -rf backup-restore mobile-clone mobile-site mobile-version restored-site
-
-      - name: Rename backup files to prevent build issues
-        run: |
-          find app -name '*-backup.tsx' -type f -exec mv {} {}.bak \;
-          find app -name '*-backup.ts' -type f -exec mv {} {}.bak \;
-
-      - name: Build
-        run: |
-          npm run build
-        env:
-          NODE_ENV: production
-
-      - name: Prepare for GitHub Pages
-        run: |
-          # Create clean docs directory
-          rm -rf docs
-          mkdir -p docs
-          
-          # Copy build output to docs
-          cp -r out/* docs/
-          
-          # Add necessary files for GitHub Pages
-          touch docs/.nojekyll
-          cp 404.html docs/404.html || echo "No 404.html found"
-
-      - name: Configure Git
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-
-      - name: Commit and push docs folder
-        run: |
-          git add docs
-          git commit -m "Deploy to GitHub Pages" || echo "No changes to commit"
-          git push 
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1 

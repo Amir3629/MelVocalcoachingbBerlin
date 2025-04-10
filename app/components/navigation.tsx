@@ -42,8 +42,8 @@ export default function Navigation() {
   }, []);
 
   const logoPath = process.env.NODE_ENV === 'production'
-    ? "/vocal-coaching/images/logo/ml-logo.PNG"
-    : "/vocal-coaching/images/logo/ml-logo.PNG"
+    ? "/MelVocalcoachingBerlin/images/logo/ml-logo.PNG"
+    : "/images/logo/ml-logo.PNG"
 
   const links = [
     { href: "/#services", label: "nav.services" },

@@ -1,5 +1,3 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 /node_modules
 /.pnp
@@ -34,12 +32,12 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# backup and temporary files
+# backup directories
 /backup-restore/
 /mobile-clone/
-/mobile-site/
-/mobile-version/
+/project_backup/
+/project_backup_*/
 /restored-site/
-*.backup
-*.bak
-*-backup-* 
+/temp_backup/
+/vocal_coaching_backup.zip
+/BACKUP_2024_APRIL.tar.gz 
