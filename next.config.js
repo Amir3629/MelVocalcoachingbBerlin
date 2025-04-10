@@ -30,7 +30,6 @@ const nextConfig = {
   publicRuntimeConfig: {
     basePath: '/MelVocalcoachingbBerlin',
   },
-  // Exclude backup folders from the build
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -38,8 +37,13 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   experimental: {
-    optimizeCss: true,
-  }
+    optimizeCss: false,
+  },
+  distDir: '.next',
+  poweredByHeader: false,
+  productionBrowserSourceMaps: false,
+  reactStrictMode: false,
+  swcMinify: true
 }
 
 module.exports = nextConfig
