@@ -37,6 +37,14 @@ jobs:
         run: touch ./out/.nojekyll
       - name: Copy public directory contents to out
         run: cp -r ./public/* ./out/
+      - name: Ensure manifest files are in correct locations
+        run: |
+          cp -f ./public/site.webmanifest ./out/site.webmanifest
+          cp -f ./public/favicon/site.webmanifest ./out/favicon/site.webmanifest 2>/dev/null || :
+          mkdir -p ./out/favicon
+          cp -f ./public/site.webmanifest ./out/favicon/site.webmanifest 2>/dev/null || :
+          ls -la ./out/
+          ls -la ./out/favicon/ 2>/dev/null || echo "No favicon directory"
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact

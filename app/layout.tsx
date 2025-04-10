@@ -50,19 +50,19 @@ export const metadata: Metadata = {
   description: "Professional vocal coaching and performance in Berlin",
   icons: {
     icon: [
-      { url: '/favicon.ico' },
-      { url: '/images/logo/ml-logo.PNG', type: 'image/png', sizes: '64x64' }
+      { url: process.env.NODE_ENV === 'production' ? '/MelVocalcoachingBerlin/favicon.ico' : '/favicon.ico' },
+      { url: process.env.NODE_ENV === 'production' ? '/MelVocalcoachingBerlin/images/logo/ml-logo.PNG' : '/images/logo/ml-logo.PNG', type: 'image/png', sizes: '64x64' }
     ],
-    shortcut: { url: '/images/logo/ml-logo.PNG', sizes: '196x196' },
-    apple: { url: '/images/logo/ml-logo.PNG', sizes: '180x180' },
+    shortcut: { url: process.env.NODE_ENV === 'production' ? '/MelVocalcoachingBerlin/images/logo/ml-logo.PNG' : '/images/logo/ml-logo.PNG', sizes: '196x196' },
+    apple: { url: process.env.NODE_ENV === 'production' ? '/MelVocalcoachingBerlin/images/logo/ml-logo.PNG' : '/images/logo/ml-logo.PNG', sizes: '180x180' },
     other: [
       {
-        url: '/favicon/site.webmanifest',
+        url: process.env.NODE_ENV === 'production' ? '/MelVocalcoachingBerlin/site.webmanifest' : '/site.webmanifest',
         rel: 'manifest'
       }
     ]
   },
-  manifest: '/favicon/site.webmanifest',
+  manifest: process.env.NODE_ENV === 'production' ? '/MelVocalcoachingBerlin/site.webmanifest' : '/site.webmanifest',
 }
 
 export default function RootLayout({
@@ -75,14 +75,18 @@ export default function RootLayout({
       <head>
         <link 
           rel="icon" 
-          href="/images/logo/ml-logo.PNG" 
+          href={process.env.NODE_ENV === 'production' ? '/MelVocalcoachingBerlin/images/logo/ml-logo.PNG' : '/images/logo/ml-logo.PNG'} 
           sizes="64x64" 
           type="image/png" 
         />
         <link 
           rel="apple-touch-icon" 
-          href="/images/logo/ml-logo.PNG" 
+          href={process.env.NODE_ENV === 'production' ? '/MelVocalcoachingBerlin/images/logo/ml-logo.PNG' : '/images/logo/ml-logo.PNG'} 
           sizes="180x180" 
+        />
+        <link
+          rel="manifest"
+          href={process.env.NODE_ENV === 'production' ? '/MelVocalcoachingBerlin/site.webmanifest' : '/site.webmanifest'}
         />
         
         {/* Fix to handle overflow without direct style manipulation */}
