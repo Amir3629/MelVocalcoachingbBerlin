@@ -97,4 +97,26 @@ if (!fs.existsSync(custom404Path)) {
   fs.writeFileSync(custom404Path, notFoundContent);
 }
 
+// Ensure favicon directory exists
+const faviconDir = path.join('out', 'favicon');
+if (!fs.existsSync(faviconDir)) {
+  console.log('Creating favicon directory...');
+  fs.mkdirSync(faviconDir, { recursive: true });
+}
+
+// Copy site.webmanifest to favicon directory
+const manifestSrc = path.join('public', 'favicon', 'site.webmanifest');
+const manifestDest = path.join('out', 'favicon', 'site.webmanifest');
+if (fs.existsSync(manifestSrc)) {
+  console.log('Copying site.webmanifest to favicon directory...');
+  fs.copyFileSync(manifestSrc, manifestDest);
+}
+
+// Also copy site.webmanifest to root directory for browsers that look there
+const rootManifestDest = path.join('out', 'site.webmanifest');
+if (fs.existsSync(manifestSrc)) {
+  console.log('Copying site.webmanifest to root directory...');
+  fs.copyFileSync(manifestSrc, rootManifestDest);
+}
+
 console.log('Out directory verification complete!'); 

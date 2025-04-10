@@ -5,38 +5,79 @@
  */
 
 const { execSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
 const chalk = require('chalk') || { green: (s) => '✅ ' + s, red: (s) => '❌ ' + s, yellow: (s) => '⚠️ ' + s, blue: (s) => 'ℹ️ ' + s };
 
 console.log('🚀 Running full GitHub Pages deployment process...\n');
 
+// Create a directory if it doesn't exist
+function ensureDirectoryExists(directory) {
+  if (!fs.existsSync(directory)) {
+    fs.mkdirSync(directory, { recursive: true });
+    console.log(`Created directory: ${directory}`);
+  }
+}
+
+// Copy a file
+function copyFile(source, destination) {
+  try {
+    fs.copyFileSync(source, destination);
+    console.log(`Copied file: ${source} -> ${destination}`);
+  } catch (error) {
+    console.error(`Error copying file: ${error.message}`);
+  }
+}
+
+// Create an empty file
+function createEmptyFile(filePath) {
+  try {
+    fs.writeFileSync(filePath, '');
+    console.log(`Created empty file: ${filePath}`);
+  } catch (error) {
+    console.error(`Error creating file: ${error.message}`);
+  }
+}
+
 try {
-  // Step 1: Fix all image paths
-  console.log(chalk.blue('Step 1: Fixing image paths...'));
+  // Step 1: Fix URL case sensitivity issues
+  console.log(chalk.blue('Step 1: Fixing URL case sensitivity issues...'));
+  execSync('node fix-urls.js', { stdio: 'inherit' });
+  
+  // Step 2: Fix all image paths
+  console.log('\n' + chalk.blue('Step 2: Fixing image paths...'));
   execSync('node fix-image-paths.js', { stdio: 'inherit' });
   
-  // Step 2: Verify deployment configuration
-  console.log('\n' + chalk.blue('Step 2: Verifying deployment configuration...'));
+  // Step 3: Verify deployment configuration
+  console.log('\n' + chalk.blue('Step 3: Verifying deployment configuration...'));
   execSync('node verify-deployment.js', { stdio: 'inherit' });
   
-  // Step 3: Build the project
-  console.log('\n' + chalk.blue('Step 3: Building the project...'));
+  // Step 4: Build the project
+  console.log('\n' + chalk.blue('Step 4: Building the project...'));
   execSync('npm run build', { stdio: 'inherit' });
   
-  // Step 4: Verify the out directory
-  console.log('\n' + chalk.blue('Step 4: Verifying the out directory...'));
+  // Step 5: Verify the out directory
+  console.log('\n' + chalk.blue('Step 5: Verifying the out directory...'));
   execSync('node verify-out-dir.js', { stdio: 'inherit' });
   
-  // Step 5: Force create .nojekyll file
-  console.log('\n' + chalk.blue('Step 5: Ensuring .nojekyll file exists...'));
-  try {
-    execSync('type nul > out\\.nojekyll', { stdio: 'inherit' });
-  } catch (error) {
-    console.log('Note: Error creating .nojekyll via type command - this is normal on non-Windows systems');
-    execSync('touch out/.nojekyll || echo ".nojekyll already exists"', { stdio: 'inherit' });
-  }
+  // Step 6: Force create .nojekyll file
+  console.log('\n' + chalk.blue('Step 6: Ensuring .nojekyll file exists...'));
+  createEmptyFile(path.join('out', '.nojekyll'));
   
-  // Step 6: Deploy to GitHub Pages
-  console.log('\n' + chalk.blue('Step 6: Deploying to GitHub Pages...'));
+  // Step 7: Copy site.webmanifest with correct paths
+  console.log('\n' + chalk.blue('Step 7: Ensuring site.webmanifest has correct paths...'));
+  ensureDirectoryExists(path.join('out', 'favicon'));
+  copyFile(
+    path.join('public', 'favicon', 'site.webmanifest'), 
+    path.join('out', 'favicon', 'site.webmanifest')
+  );
+  
+  // Step 8: Fix manifest references in HTML files
+  console.log('\n' + chalk.blue('Step 8: Fixing manifest references in HTML files...'));
+  execSync('node fix-manifest-urls.js', { stdio: 'inherit' });
+  
+  // Step 9: Deploy to GitHub Pages
+  console.log('\n' + chalk.blue('Step 9: Deploying to GitHub Pages...'));
   execSync('gh-pages -d out -b gh-pages', { stdio: 'inherit' });
   
   // Success

@@ -11,6 +11,7 @@ import type { Metadata, Viewport } from "next"
 import { Inter, Playfair_Display, Cormorant_Garamond, Montserrat, Roboto } from "next/font/google"
 import RootClient from "./components/root-client"
 import { MediaProvider } from "./components/media-context"
+import { getImagePath } from '../../utils/image-path'
 
 const inter = Inter({ subsets: ["latin"] })
 const playfair = Playfair_Display({
@@ -50,19 +51,19 @@ export const metadata: Metadata = {
   description: "Professional vocal coaching and performance in Berlin",
   icons: {
     icon: [
-      { url: process.env.NODE_ENV === 'production' ? '/MelVocalcoachingBerlin/favicon.ico' : '/favicon.ico' },
-      { url: process.env.NODE_ENV === 'production' ? '/MelVocalcoachingBerlin/images/logo/ml-logo.PNG' : '/images/logo/ml-logo.PNG', type: 'image/png', sizes: '64x64' }
+      { url: getImagePath('/favicon.ico') },
+      { url: getImagePath('/images/logo/ml-logo.PNG'), type: 'image/png', sizes: '64x64' }
     ],
-    shortcut: { url: process.env.NODE_ENV === 'production' ? '/MelVocalcoachingBerlin/images/logo/ml-logo.PNG' : '/images/logo/ml-logo.PNG', sizes: '196x196' },
-    apple: { url: process.env.NODE_ENV === 'production' ? '/MelVocalcoachingBerlin/images/logo/ml-logo.PNG' : '/images/logo/ml-logo.PNG', sizes: '180x180' },
+    shortcut: { url: getImagePath('/images/logo/ml-logo.PNG'), sizes: '196x196' },
+    apple: { url: getImagePath('/images/logo/ml-logo.PNG'), sizes: '180x180' },
     other: [
       {
-        url: process.env.NODE_ENV === 'production' ? '/MelVocalcoachingBerlin/site.webmanifest' : '/site.webmanifest',
+        url: '/MelVocalcoachingbBerlin/favicon/site.webmanifest',
         rel: 'manifest'
       }
     ]
   },
-  manifest: process.env.NODE_ENV === 'production' ? '/MelVocalcoachingBerlin/site.webmanifest' : '/site.webmanifest',
+  manifest: '/MelVocalcoachingbBerlin/favicon/site.webmanifest',
 }
 
 export default function RootLayout({
@@ -75,18 +76,14 @@ export default function RootLayout({
       <head>
         <link 
           rel="icon" 
-          href={process.env.NODE_ENV === 'production' ? '/MelVocalcoachingBerlin/images/logo/ml-logo.PNG' : '/images/logo/ml-logo.PNG'} 
+          href={getImagePath('/images/logo/ml-logo.PNG')} 
           sizes="64x64" 
           type="image/png" 
         />
         <link 
           rel="apple-touch-icon" 
-          href={process.env.NODE_ENV === 'production' ? '/MelVocalcoachingBerlin/images/logo/ml-logo.PNG' : '/images/logo/ml-logo.PNG'} 
+          href={getImagePath('/images/logo/ml-logo.PNG')} 
           sizes="180x180" 
-        />
-        <link
-          rel="manifest"
-          href={process.env.NODE_ENV === 'production' ? '/MelVocalcoachingBerlin/site.webmanifest' : '/site.webmanifest'}
         />
         
         {/* Fix to handle overflow without direct style manipulation */}
