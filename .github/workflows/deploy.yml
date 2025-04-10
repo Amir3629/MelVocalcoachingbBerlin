@@ -24,55 +24,40 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build Next.js site
+        run: npm run build
+        
       - name: Setup Pages
         uses: actions/configure-pages@v4
         
-      - name: Create static site
+      - name: Prepare site for deployment
         shell: bash
         run: |
-          # Copy the public directory as is to _site (preserve all subdirectories)
-          cp -r public _site
+          # Copy out directory to _site for deployment
+          mkdir -p _site
+          cp -r out/* _site/
           
-          # Add .nojekyll file to bypass Jekyll processing
+          # Ensure .nojekyll file exists to bypass Jekyll processing
           touch _site/.nojekyll
           
-          # Make sure we have the necessary folders and files
-          mkdir -p _site/MelVocalcoachingbBerlin
+          # Create redirects for any nested paths
           mkdir -p _site/MelVocalcoachingbBerlin/MelVocalcoachingbBerlin
           
-          # Ensure index.html files exist in all locations
-          if [ ! -f "_site/index.html" ]; then
-            cp _site/MelVocalcoachingbBerlin/index.html _site/index.html
-          fi
+          # Create simple redirect files
+          echo '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="refresh" content="0;url=/MelVocalcoachingbBerlin/"><title>Redirecting</title></head><body><p>Redirecting to <a href="/MelVocalcoachingbBerlin/">Mel Vocal Coaching Berlin</a>...</p></body></html>' > _site/MelVocalcoachingbBerlin/MelVocalcoachingbBerlin/index.html
           
-          # Simple approach to avoid heredoc issues
+          # Create root redirect if needed
           if [ ! -f "_site/index.html" ]; then
-            echo '<!DOCTYPE html>' > _site/index.html
-            echo '<html>' >> _site/index.html
-            echo '  <head>' >> _site/index.html
-            echo '    <meta charset="UTF-8">' >> _site/index.html
-            echo '    <meta http-equiv="refresh" content="0;url=/MelVocalcoachingbBerlin/">' >> _site/index.html
-            echo '    <title>Redirecting to Mel Vocal Coaching Berlin</title>' >> _site/index.html
-            echo '  </head>' >> _site/index.html
-            echo '  <body>' >> _site/index.html
-            echo '    <p>Redirecting to <a href="/MelVocalcoachingbBerlin/">Mel Vocal Coaching Berlin</a>...</p>' >> _site/index.html
-            echo '  </body>' >> _site/index.html
-            echo '</html>' >> _site/index.html
-          fi
-          
-          # Create the necessary redirect file
-          if [ ! -f "_site/MelVocalcoachingbBerlin/MelVocalcoachingbBerlin/index.html" ]; then
-            echo '<!DOCTYPE html>' > _site/MelVocalcoachingbBerlin/MelVocalcoachingbBerlin/index.html
-            echo '<html>' >> _site/MelVocalcoachingbBerlin/MelVocalcoachingbBerlin/index.html
-            echo '  <head>' >> _site/MelVocalcoachingbBerlin/MelVocalcoachingbBerlin/index.html
-            echo '    <meta charset="UTF-8">' >> _site/MelVocalcoachingbBerlin/MelVocalcoachingbBerlin/index.html
-            echo '    <meta http-equiv="refresh" content="0;url=/MelVocalcoachingbBerlin/">' >> _site/MelVocalcoachingbBerlin/MelVocalcoachingbBerlin/index.html
-            echo '    <title>Redirecting to Mel Vocal Coaching Berlin</title>' >> _site/MelVocalcoachingbBerlin/MelVocalcoachingbBerlin/index.html
-            echo '  </head>' >> _site/MelVocalcoachingbBerlin/MelVocalcoachingbBerlin/index.html
-            echo '  <body>' >> _site/MelVocalcoachingbBerlin/MelVocalcoachingbBerlin/index.html
-            echo '    <p>Redirecting to <a href="/MelVocalcoachingbBerlin/">Mel Vocal Coaching Berlin</a>...</p>' >> _site/MelVocalcoachingbBerlin/MelVocalcoachingbBerlin/index.html
-            echo '  </body>' >> _site/MelVocalcoachingbBerlin/MelVocalcoachingbBerlin/index.html
-            echo '</html>' >> _site/MelVocalcoachingbBerlin/MelVocalcoachingbBerlin/index.html
+            echo '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="refresh" content="0;url=/MelVocalcoachingbBerlin/"><title>Redirecting</title></head><body><p>Redirecting to <a href="/MelVocalcoachingbBerlin/">Mel Vocal Coaching Berlin</a>...</p></body></html>' > _site/index.html
           fi
           
           # List all files for debugging

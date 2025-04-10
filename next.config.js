@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
-  output: process.env.NODE_ENV === 'production' ? 'export' : undefined,
+  output: 'export',
   images: {
     unoptimized: true,
     remotePatterns: [
@@ -17,8 +17,8 @@ const nextConfig = {
       }
     ],
   },
-  basePath: process.env.NODE_ENV === 'production' ? '/MelVocalcoachingBerlin' : '',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/MelVocalcoachingBerlin/' : '',
+  basePath: '/MelVocalcoachingbBerlin',
+  assetPrefix: '/MelVocalcoachingbBerlin/',
   trailingSlash: true,
   webpack: (config) => {
     config.module.rules.push({
@@ -28,33 +28,17 @@ const nextConfig = {
     return config
   },
   publicRuntimeConfig: {
-    basePath: process.env.NODE_ENV === 'production' ? '/MelVocalcoachingBerlin' : '',
+    basePath: '/MelVocalcoachingbBerlin',
   },
-  typescript: {
-    // During build, ignore type checking errors
-    ignoreBuildErrors: true,
-  },
+  // Exclude backup folders from the build
   eslint: {
-    // During build, ignore eslint errors
     ignoreDuringBuilds: true,
   },
-  // Ensure all static files are copied correctly
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   experimental: {
     optimizeCss: true,
-    optimizePackageImports: ['@radix-ui/react-icons', 'lucide-react'],
-  },
-  async headers() {
-    return [
-      {
-        source: '/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-    ]
   }
 }
 
