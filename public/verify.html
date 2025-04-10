@@ -64,6 +64,15 @@
     a:hover {
       background-color: #000;
     }
+    .debug {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f8f9fa;
+      border-radius: 5px;
+      font-family: monospace;
+      text-align: left;
+      font-size: 12px;
+    }
   </style>
 </head>
 <body>
@@ -81,7 +90,34 @@
         <li><strong>Generated:</strong> <script>document.write(new Date().toLocaleString())</script></li>
       </ul>
     </div>
-    <a href="/MelVocalcoachingbBerlin/">Return to Main Site</a>
+    <a href="https://amir3629.github.io/MelVocalcoachingbBerlin/">Return to Main Site</a>
+    
+    <div class="debug" id="debug-info">
+      Loading debug information...
+    </div>
   </div>
+
+  <script>
+    // Add debug information
+    const debugElement = document.getElementById('debug-info');
+    const debugInfo = {
+      'URL': window.location.href,
+      'Hostname': window.location.hostname,
+      'Path': window.location.pathname,
+      'Protocol': window.location.protocol,
+      'User Agent': navigator.userAgent,
+      'Time': new Date().toString()
+    };
+    
+    let debugHtml = '';
+    for (const [key, value] of Object.entries(debugInfo)) {
+      debugHtml += `<strong>${key}:</strong> ${value}<br>`;
+    }
+    
+    debugElement.innerHTML = debugHtml;
+    
+    console.log('Verification page loaded successfully');
+    console.log('Debug info:', debugInfo);
+  </script>
 </body>
 </html> 

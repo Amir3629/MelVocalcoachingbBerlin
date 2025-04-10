@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="refresh" content="3;url=https://amir3629.github.io/MelVocalcoachingbBerlin/">
+  <title>Redirecting to Mel Vocal Coaching Berlin</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+    }
+    .card {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+      max-width: 500px;
+      width: 100%;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+    p {
+      color: #666;
+      line-height: 1.5;
+      margin-bottom: 30px;
+    }
+    .redirect-link {
+      display: inline-block;
+      background-color: #333;
+      color: white;
+      text-decoration: none;
+      padding: 12px 25px;
+      border-radius: 5px;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+    .redirect-link:hover {
+      background-color: #000;
+    }
+    .timer {
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Mel Jazz - Vocal Coaching</h1>
+    <p>You are being redirected to the main site in <span class="timer">3</span> seconds.</p>
+    <a href="https://amir3629.github.io/MelVocalcoachingbBerlin/" class="redirect-link">Click here if you are not redirected automatically</a>
+  </div>
+
+  <script>
+    // Countdown timer
+    let seconds = 3;
+    const timerElement = document.querySelector('.timer');
+    
+    setInterval(function() {
+      seconds--;
+      if (seconds >= 0) {
+        timerElement.textContent = seconds;
+      }
+      
+      if (seconds === 0) {
+        console.log('Redirecting now...');
+        window.location.href = 'https://amir3629.github.io/MelVocalcoachingbBerlin/';
+      }
+    }, 1000);
+    
+    // Debug information
+    console.log('Current URL:', window.location.href);
+    console.log('Redirecting to: https://amir3629.github.io/MelVocalcoachingbBerlin/');
+  </script>
+</body>
+</html> 
