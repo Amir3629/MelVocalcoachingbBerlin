@@ -32,14 +32,22 @@ jobs:
           static_site_generator: next
       - name: Install dependencies
         run: npm ci
+      - name: Install cross-env
+        run: npm install cross-env --save-dev
       - name: Build with Next.js
         run: npm run build:gh-pages
       - name: Create .nojekyll file
         run: touch ./out/.nojekyll
       - name: Copy public directory contents to out
         run: cp -r ./public/* ./out/
+      - name: Create site.webmanifest in the correct location
+        run: |
+          mkdir -p ./out/favicon
+          cp ./public/favicon/site.webmanifest ./out/favicon/
+      - name: List out directory
+        run: ls -la ./out
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v2
         with:
           path: ./out
 
@@ -52,4 +60,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1 
+        uses: actions/deploy-pages@v2 

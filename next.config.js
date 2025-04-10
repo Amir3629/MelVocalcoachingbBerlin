@@ -38,6 +38,11 @@ const nextConfig = {
     // During build, ignore eslint errors
     ignoreDuringBuilds: true,
   },
+  // Ensure all static files are copied correctly
+  experimental: {
+    optimizeCss: true,
+    optimizePackageImports: ['@radix-ui/react-icons', 'lucide-react'],
+  },
 }
 
 module.exports = nextConfig

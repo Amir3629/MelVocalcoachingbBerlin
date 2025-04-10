@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:gh-pages": "set NEXT_PUBLIC_GH_PAGES=true && next build",
+    "build:gh-pages": "cross-env NEXT_PUBLIC_GH_PAGES=true next build",
     "start": "next start",
     "lint": "next lint",
     "check-images": "node scripts/check-images.js",
@@ -64,6 +64,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
+    "cross-env": "^7.0.3",
     "date-fns": "^2.30.0",
     "embla-carousel-react": "8.5.1",
     "framer-motion": "^12.5.0",

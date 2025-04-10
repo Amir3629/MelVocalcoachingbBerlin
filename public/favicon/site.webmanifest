@@ -1,20 +1,21 @@
 {
-  "name": "Mel Vocal Coaching",
-  "short_name": "MelJazz",
+  "name": "Mel jazz - Vocal Coaching",
+  "short_name": "Mel jazz",
   "icons": [
     {
-      "src": "/images/logo/ml-logo.PNG",
-      "sizes": "64x64",
-      "type": "image/png"
+      "src": "/MelVocalcoachingBerlin/images/logo/ml-logo.PNG",
+      "sizes": "196x196",
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "/images/logo/ml-logo.PNG",
-      "sizes": "180x180",
-      "type": "image/png"
+      "src": "/MelVocalcoachingBerlin/images/logo/ml-logo.PNG",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ],
   "theme_color": "#000000",
   "background_color": "#000000",
-  "display": "standalone",
-  "start_url": "/"
+  "display": "standalone"
 } 
