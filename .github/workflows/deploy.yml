@@ -6,41 +6,62 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
-  build-and-deploy:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+        
       - name: Create static site
         run: |
-          mkdir -p site
-          cp -r public/* site/
-          touch site/.nojekyll
-          # Create simple index.html if it doesn't exist
-          if [ ! -f site/index.html ]; then
-            cat > site/index.html << 'EOL'
-            <!DOCTYPE html>
-            <html>
-              <head>
-                <meta charset="UTF-8">
-                <meta http-equiv="refresh" content="0;url=/MelVocalcoachingbBerlin/">
-                <title>Redirect to Mel Vocal Coaching Berlin</title>
-              </head>
-              <body>
-                <p>Redirecting to <a href="/MelVocalcoachingbBerlin/">Mel Vocal Coaching Berlin</a>...</p>
-              </body>
-            </html>
-            EOL
-          fi
-
-      - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
+          mkdir -p _site
+          cp -r public/* _site/
+          touch _site/.nojekyll
+          
+          # Ensure the MelVocalcoachingbBerlin directory exists
+          mkdir -p _site/MelVocalcoachingbBerlin
+          
+          # Copy verify page to ensure it's accessible
+          cp public/verify.html _site/MelVocalcoachingbBerlin/verify.html
+          
+          # Create simple root index page for redirection
+          cat > _site/index.html << 'EOL'
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="UTF-8">
+              <meta http-equiv="refresh" content="0;url=/MelVocalcoachingbBerlin/">
+              <title>Redirecting to Mel Vocal Coaching Berlin</title>
+            </head>
+            <body>
+              <p>Redirecting to <a href="/MelVocalcoachingbBerlin/">Mel Vocal Coaching Berlin</a>...</p>
+            </body>
+          </html>
+          EOL
+          
+          # List the site contents for debugging
+          find _site -type f | sort
+        
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          folder: site
-          branch: gh-pages 
+          path: '_site'
+          
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4 
