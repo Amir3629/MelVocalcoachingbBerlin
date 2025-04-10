@@ -3,13 +3,13 @@
   "short_name": "Mel jazz",
   "icons": [
     {
-      "src": "/images/logo/ml-logo.PNG",
+      "src": "/MelVocalcoachingbBerlin/images/logo/ml-logo.PNG",
       "sizes": "196x196",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/images/logo/ml-logo.PNG",
+      "src": "/MelVocalcoachingbBerlin/images/logo/ml-logo.PNG",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
