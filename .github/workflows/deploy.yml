@@ -29,25 +29,15 @@ jobs:
         
       - name: Create static site
         run: |
-          mkdir -p _site
-          cp -r public/* _site/
+          # Copy the public directory as is to _site
+          cp -r public _site
           
-          # Make sure index.html exists at the root level and in MelVocalcoachingbBerlin directory
-          mkdir -p _site/MelVocalcoachingbBerlin
-          cp public/index.html _site/MelVocalcoachingbBerlin/index.html
-          
-          # Create a .nojekyll file to bypass Jekyll processing
+          # Add .nojekyll file to bypass Jekyll processing
           touch _site/.nojekyll
           
-          # Make sure all directories exist
-          mkdir -p _site/MelVocalcoachingbBerlin/booking
-          
-          # Create an index.html in the booking directory
-          echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=/"></head><body><p>Please wait...</p></body></html>' > _site/MelVocalcoachingbBerlin/booking/index.html
-          
-          # List files for debugging
+          # List all files for debugging
           echo "Files in _site directory:"
-          find _site -type f | sort
+          find _site -type f | grep -v "node_modules" | sort
         
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

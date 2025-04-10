@@ -1,110 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mel Jazz - Vocal Coaching in Berlin</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    html, body {
-      height: 100%;
-      width: 100%;
-    }
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background-color: #f5f5f5;
+      font-family: Arial, sans-serif;
       margin: 0;
       padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
       text-align: center;
-      color: #333;
+      background-color: #f5f5f5;
     }
-    .header {
-      margin-bottom: 40px;
-    }
-    .logo {
-      max-width: 150px;
-      height: auto;
-      margin-bottom: 20px;
-      border-radius: 50%;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    .card {
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
       background-color: white;
+      padding: 30px;
       border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      padding: 40px;
-      max-width: 600px;
-      width: 100%;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
     h1 {
+      font-size: 2.5rem;
       color: #333;
-      margin-bottom: 10px;
     }
     h2 {
+      font-size: 1.5rem;
       color: #666;
-      font-weight: normal;
-      margin-top: 0;
       margin-bottom: 30px;
     }
     .feature {
-      background-color: #f9f9f9;
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 20px;
       text-align: left;
+      margin-bottom: 20px;
+      padding: 15px;
+      background-color: #f9f9f9;
+      border-radius: 5px;
     }
-    .feature h3 {
-      color: #333;
-      margin-top: 0;
-      font-size: 1.3rem;
-    }
-    .feature p {
-      color: #666;
-      line-height: 1.5;
-      margin-bottom: 0;
-    }
-    .cta {
+    .button {
       display: inline-block;
       background-color: #333;
       color: white;
+      padding: 12px 30px;
       text-decoration: none;
-      padding: 15px 30px;
       border-radius: 5px;
-      font-weight: 500;
-      margin-top: 20px;
-      transition: background-color 0.2s;
+      font-weight: bold;
+      margin: 20px 0;
     }
-    .cta:hover {
-      background-color: #000;
-    }
-    .footer {
+    footer {
       margin-top: 40px;
       color: #999;
     }
-    .footer a {
+    footer a {
       color: #666;
-      text-decoration: none;
-    }
-    .footer a:hover {
-      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <div class="header">
-    <img src="https://amir3629.github.io/MelVocalcoachingbBerlin/images/logo/ml-logo.PNG" alt="Mel Jazz Logo" class="logo" onerror="this.src='https://via.placeholder.com/150'">
-  </div>
-  
-  <div class="card">
+  <div class="container">
     <h1>Mel Jazz</h1>
     <h2>Professional Vocal Coaching in Berlin</h2>
     
@@ -123,21 +75,11 @@
       <p>Book sessions that fit your schedule with our easy online booking system.</p>
     </div>
     
-    <a href="booking/" class="cta">Book a Session</a>
-  </div>
-  
-  <div class="footer">
-    <p>&copy; 2025 Mel Jazz Vocal Coaching | <a href="verify.html">Verify Deployment</a></p>
-  </div>
-
-  <script>
-    // Simple script to log that the page has loaded
-    console.log('Mel Vocal Coaching page loaded successfully');
+    <a href="booking/" class="button">Book a Session</a>
     
-    // Add a fallback for the logo if it fails to load
-    document.querySelector('.logo').addEventListener('error', function() {
-      this.src = 'https://via.placeholder.com/150';
-    });
-  </script>
+    <footer>
+      <p>&copy; 2025 Mel Jazz Vocal Coaching | <a href="verify.html">Verify Deployment</a></p>
+    </footer>
+  </div>
 </body>
 </html> 
