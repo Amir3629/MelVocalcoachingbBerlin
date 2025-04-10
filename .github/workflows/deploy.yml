@@ -6,51 +6,47 @@ on:
       - main
   workflow_dispatch:
 
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
+# Allow only one concurrent deployment
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
 jobs:
+  # Build job
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: "18"
           cache: 'npm'
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
-        with:
-          static_site_generator: next
       - name: Install dependencies
         run: npm ci
       - name: Install cross-env
         run: npm install cross-env --save-dev
-      - name: Build with Next.js
+      - name: Build
         run: npm run build:gh-pages
       - name: Create .nojekyll file
         run: touch ./out/.nojekyll
       - name: Copy public directory contents to out
         run: cp -r ./public/* ./out/
-      - name: Create site.webmanifest in the correct location
-        run: |
-          mkdir -p ./out/favicon
-          cp ./public/favicon/site.webmanifest ./out/favicon/
-      - name: List out directory
-        run: ls -la ./out
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: ./out
+          path: './out'
 
+  # Deployment job
   deploy:
     environment:
       name: github-pages
@@ -60,4 +56,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2 
+        uses: actions/deploy-pages@v4 
