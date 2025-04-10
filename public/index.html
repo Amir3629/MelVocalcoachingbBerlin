@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="refresh" content="3;url=https://amir3629.github.io/MelVocalcoachingbBerlin/">
-  <title>Redirecting to Mel Vocal Coaching Berlin</title>
+  <title>Mel Jazz - Vocal Coaching in Berlin</title>
   <style>
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -17,70 +16,119 @@
       justify-content: center;
       min-height: 100vh;
       text-align: center;
+      color: #333;
+    }
+    .header {
+      margin-bottom: 40px;
+    }
+    .logo {
+      max-width: 150px;
+      height: auto;
+      margin-bottom: 20px;
+      border-radius: 50%;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
     .card {
       background-color: white;
       border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       padding: 40px;
-      max-width: 500px;
+      max-width: 600px;
       width: 100%;
     }
     h1 {
       color: #333;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
-    p {
+    h2 {
       color: #666;
-      line-height: 1.5;
+      font-weight: normal;
+      margin-top: 0;
       margin-bottom: 30px;
     }
-    .redirect-link {
+    .feature {
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .feature h3 {
+      color: #333;
+      margin-top: 0;
+      font-size: 1.3rem;
+    }
+    .feature p {
+      color: #666;
+      line-height: 1.5;
+      margin-bottom: 0;
+    }
+    .cta {
       display: inline-block;
       background-color: #333;
       color: white;
       text-decoration: none;
-      padding: 12px 25px;
+      padding: 15px 30px;
       border-radius: 5px;
       font-weight: 500;
+      margin-top: 20px;
       transition: background-color 0.2s;
     }
-    .redirect-link:hover {
+    .cta:hover {
       background-color: #000;
     }
-    .timer {
-      font-weight: bold;
-      color: #333;
+    .footer {
+      margin-top: 40px;
+      color: #999;
+    }
+    .footer a {
+      color: #666;
+      text-decoration: none;
+    }
+    .footer a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
+  <div class="header">
+    <img src="https://amir3629.github.io/MelVocalcoachingbBerlin/images/logo/ml-logo.PNG" alt="Mel Jazz Logo" class="logo" onerror="this.src='https://via.placeholder.com/150'">
+  </div>
+  
   <div class="card">
-    <h1>Mel Jazz - Vocal Coaching</h1>
-    <p>You are being redirected to the main site in <span class="timer">3</span> seconds.</p>
-    <a href="https://amir3629.github.io/MelVocalcoachingbBerlin/" class="redirect-link">Click here if you are not redirected automatically</a>
+    <h1>Mel Jazz</h1>
+    <h2>Professional Vocal Coaching in Berlin</h2>
+    
+    <div class="feature">
+      <h3>✨ Vocal Technique</h3>
+      <p>Develop your singing skills with personalized vocal coaching from an experienced professional.</p>
+    </div>
+    
+    <div class="feature">
+      <h3>🎵 Jazz and More</h3>
+      <p>Specialize in jazz, pop, soul, or find your own unique style with guided training.</p>
+    </div>
+    
+    <div class="feature">
+      <h3>📅 Flexible Scheduling</h3>
+      <p>Book sessions that fit your schedule with our easy online booking system.</p>
+    </div>
+    
+    <a href="https://amir3629.github.io/MelVocalcoachingbBerlin/booking/" class="cta">Book a Session</a>
+  </div>
+  
+  <div class="footer">
+    <p>&copy; 2025 Mel Jazz Vocal Coaching | <a href="https://amir3629.github.io/MelVocalcoachingbBerlin/verify.html">Verify Deployment</a></p>
   </div>
 
   <script>
-    // Countdown timer
-    let seconds = 3;
-    const timerElement = document.querySelector('.timer');
+    // Simple script to log that the page has loaded
+    console.log('Mel Vocal Coaching page loaded successfully');
     
-    setInterval(function() {
-      seconds--;
-      if (seconds >= 0) {
-        timerElement.textContent = seconds;
-      }
-      
-      if (seconds === 0) {
-        console.log('Redirecting now...');
-        window.location.href = 'https://amir3629.github.io/MelVocalcoachingbBerlin/';
-      }
-    }, 1000);
-    
-    // Debug information
-    console.log('Current URL:', window.location.href);
-    console.log('Redirecting to: https://amir3629.github.io/MelVocalcoachingbBerlin/');
+    // Add a fallback for the logo if it fails to load
+    document.querySelector('.logo').addEventListener('error', function() {
+      this.src = 'https://via.placeholder.com/150';
+    });
   </script>
 </body>
 </html> 
