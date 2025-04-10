@@ -31,30 +31,22 @@ jobs:
         run: |
           mkdir -p _site
           cp -r public/* _site/
+          
+          # Make sure index.html exists at the root level
+          cp public/index.html _site/index.html
+          
+          # Also place it in the proper GitHub Pages path
+          mkdir -p _site/MelVocalcoachingbBerlin
+          cp public/index.html _site/MelVocalcoachingbBerlin/index.html
+          
+          # Create a .nojekyll file to bypass Jekyll processing
           touch _site/.nojekyll
           
-          # Ensure the MelVocalcoachingbBerlin directory exists
-          mkdir -p _site/MelVocalcoachingbBerlin
+          # Ensure all files have the correct URLs
+          find _site -type f -name "*.html" -exec sed -i 's|/MelVocalcoachingbBerlin/|https://amir3629.github.io/MelVocalcoachingbBerlin/|g' {} \;
           
-          # Copy verify page to ensure it's accessible
-          cp public/verify.html _site/MelVocalcoachingbBerlin/verify.html
-          
-          # Create simple root index page for redirection
-          cat > _site/index.html << 'EOL'
-          <!DOCTYPE html>
-          <html>
-            <head>
-              <meta charset="UTF-8">
-              <meta http-equiv="refresh" content="0;url=/MelVocalcoachingbBerlin/">
-              <title>Redirecting to Mel Vocal Coaching Berlin</title>
-            </head>
-            <body>
-              <p>Redirecting to <a href="/MelVocalcoachingbBerlin/">Mel Vocal Coaching Berlin</a>...</p>
-            </body>
-          </html>
-          EOL
-          
-          # List the site contents for debugging
+          # List files for debugging
+          echo "Files in _site directory:"
           find _site -type f | sort
         
       - name: Upload artifact
