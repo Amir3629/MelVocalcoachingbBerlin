@@ -6,6 +6,7 @@ import { motion } from "framer-motion"
 import { useLanguage } from "./language-switcher"
 import { useTranslation } from 'react-i18next'
 import { useRef } from "react"
+import { getImagePath } from '../../utils/image-path'
 
 interface ServiceDetails {
   includes: string[];
@@ -31,31 +32,23 @@ export default function ServicesSection() {
     {
       key: 'singing',
       icon: Music,
-      image: process.env.NODE_ENV === 'production' 
-        ? "/vocal-coaching/images/services/singing.jpg" 
-        : "/images/services/singing.jpg"
+      image: getImagePath('/images/services/singing.jpg')
     },
     {
       key: 'coaching',
       icon: Mic,
-      image: process.env.NODE_ENV === 'production'
-        ? "/vocal-coaching/images/services/coaching.jpg"
-        : "/images/services/coaching.jpg"
+      image: getImagePath('/images/services/coaching.jpg')
     },
     {
       key: 'workshop',
       icon: Theater,
-      image: process.env.NODE_ENV === 'production'
-        ? "/vocal-coaching/images/services/workshop.jpg"
-        : "/images/services/workshop.jpg"
+      image: getImagePath('/images/services/workshop.jpg')
     },
     {
       key: 'choir',
       icon: Users2,
       link: "https://chornextdoor.de",
-      image: process.env.NODE_ENV === 'production'
-        ? "/vocal-coaching/images/services/chor.jpg"
-        : "/images/services/chor.jpg"
+      image: getImagePath('/images/services/chor.jpg')
     }
   ]
 

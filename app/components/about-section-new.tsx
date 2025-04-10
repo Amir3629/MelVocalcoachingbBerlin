@@ -3,13 +3,12 @@
 import { useTranslation } from 'react-i18next'
 import Image from "next/image"
 import { Trophy, Users, Music } from "lucide-react"
+import { getImagePath } from '../../utils/image-path'
 
 export default function AboutSectionNew() {
   const { t } = useTranslation()
 
-  const imagePath = process.env.NODE_ENV === 'production'
-    ? "/vocal-coaching/images/about/profile.jpg"
-    : "/images/about/profile.jpg"
+  const imagePath = getImagePath('/images/about/profile.jpg')
 
   const stats = [
     { 

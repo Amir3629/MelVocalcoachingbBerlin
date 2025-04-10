@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { VolumeX, Volume2, Play, Pause } from "lucide-react"
 import { useMedia } from "./media-context"
+import { getImagePath } from '../../utils/image-path'
 
 // Add event system for media coordination
 const MEDIA_STOP_EVENT = 'stopAllMedia'
@@ -19,13 +20,9 @@ export default function VideoPreview() {
   const [hasError, setHasError] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
 
-  const posterImage = process.env.NODE_ENV === 'production'
-    ? '/vocal-coaching/images/preview-poster.svg'
-    : '/images/preview-poster.svg'
+  const posterImage = getImagePath('/images/preview-poster.svg')
 
-  const videoSrc = process.env.NODE_ENV === 'production'
-    ? '/vocal-coaching/videos/preview.mp4'
-    : '/videos/preview.mp4'
+  const videoSrc = getImagePath('/videos/preview.mp4')
 
   useEffect(() => {
     if (videoRef.current) {
@@ -116,8 +113,8 @@ export default function VideoPreview() {
           onLoadStart={handleLoadStart}
           onLoadedData={handleLoadedData}
           onError={handleError}
-          poster={process.env.NODE_ENV === 'production' ? '/vocal-coaching/images/preview-poster.webp' : '/images/preview-poster.webp'}
-          src={process.env.NODE_ENV === 'production' ? '/vocal-coaching/videos/preview.mp4' : '/videos/preview.mp4'}
+          poster={getImagePath('/images/preview-poster.webp')}
+          src={getImagePath('/videos/preview.mp4')}
         />
       </div>
 

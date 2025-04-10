@@ -5,6 +5,7 @@ import { motion } from "framer-motion"
 import { MapPin, Clock, Mail, Send } from "lucide-react"
 import Image from "next/image"
 import SuccessMessage from "./success-message"
+import { getImagePath } from '../../utils/image-path'
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -92,9 +93,7 @@ export default function ContactForm() {
           {!bgImageError && (
             <div className="absolute inset-0">
               <Image
-                src={process.env.NODE_ENV === 'production'
-                  ? "/vocal-coaching/images/backgrounds/contact-bg.jpg"
-                  : "/images/backgrounds/contact-bg.jpg"}
+                src={getImagePath('/images/backgrounds/contact-bg.jpg')}
                 alt="Contact Background"
                 fill
                 className="object-cover mix-blend-overlay opacity-60"

@@ -30,20 +30,6 @@ const nextConfig = {
   publicRuntimeConfig: {
     basePath: '/MelVocalcoachingbBerlin',
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  experimental: {
-    optimizeCss: false,
-  },
-  distDir: '.next',
-  poweredByHeader: false,
-  productionBrowserSourceMaps: false,
-  reactStrictMode: false,
-  swcMinify: true
 }
 
 module.exports = nextConfig

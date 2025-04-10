@@ -26,6 +26,7 @@ import FlipCards from './components/flip-cards'
 import AboutSectionFixed from "@/app/components/about-section-fixed"
 import { AppImage, RegularImg } from '@/app/components/ui/image'
 import MusicSection from '@/app/components/music-section'
+import { getImagePath } from '../../utils/image-path'
 
 export default function Home() {
   const [isLoaded, setIsLoaded] = useState(false)
@@ -264,7 +265,7 @@ export default function Home() {
               subtitle="Event Performances"
               description="Bereichern Sie Ihre Veranstaltung mit professionellem Gesang - von intimen Zusammenkünften bis hin zu großen Feiern. Verfügbar als Solo-Künstlerin oder mit vollständiger Band-Begleitung."
               icon={<Music className="w-6 h-6" />}
-              image={process.env.NODE_ENV === 'production' ? "/vocal-coaching/images/services/singing.jpg" : "/images/services/singing.jpg"}
+              image={getImagePath('/images/services/singing.jpg')}
               features={[
                 "Preisgekrönte Sängerin mit über 1000 Auftritten",
                 "Beherrschung verschiedener Genres (Jazz, Pop, Soul, Klassik)",
@@ -295,7 +296,7 @@ export default function Home() {
               subtitle="CVT Mastery"
               description="Entdecken Sie Ihre authentische Stimme durch die revolutionäre Complete Vocal Technique® - die wissenschaftlich fundierte Methode, der Grammy-Gewinner und Broadway-Stars vertrauen."
               icon={<Mic className="w-6 h-6" />}
-              image={process.env.NODE_ENV === 'production' ? "/vocal-coaching/images/services/coaching.jpg" : "/images/services/coaching.jpg"}
+              image={getImagePath('/images/services/coaching.jpg')}
               features={[
                 "Zertifizierte Complete Vocal Technique® Lehrerin",
                 "Stimmumfang • Ausdauer • Stilvielfalt",
@@ -326,7 +327,7 @@ export default function Home() {
               subtitle="Group Mastery"
               description="Transformieren Sie Gruppendynamiken durch wissenschaftlich fundiertes Stimmtraining - von Universitäts-Masterclasses bis hin zu Teambuilding-Maßnahmen. Als Berlins autorisierte Complete Vocal Technique® Spezialistin erstelle ich maßgeschneiderte Workshops."
               icon={<Theater className="w-6 h-6" />}
-              image={process.env.NODE_ENV === 'production' ? "/vocal-coaching/images/services/workshop.jpg" : "/images/services/workshop.jpg"}
+              image={getImagePath('/images/services/workshop.jpg')}
               features={[
                 "Nur 3. CVT-zertifizierte Lehrerin in Berlin",
                 "Akkreditierte Lehrmethoden auf Universitätsniveau",
@@ -358,7 +359,7 @@ export default function Home() {
               subtitle="Gemeinsam Singen"
               description="Entdecken Sie die Freude am gemeinsamen Singen in unserem dynamischen Nachbarschaftschor - für alle Levels offen."
               icon={<Users2 className="w-6 h-6" />}
-              image={process.env.NODE_ENV === 'production' ? "/vocal-coaching/images/services/chor.jpg" : "/images/services/chor.jpg"}
+              image={getImagePath('/images/services/chor.jpg')}
               features={[
                 "Mehrstimmigkeit",
                 "Harmonie",

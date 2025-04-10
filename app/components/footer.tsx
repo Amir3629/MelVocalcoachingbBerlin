@@ -8,6 +8,7 @@ import LegalDocumentModal from "./legal-document-modal"
 import dynamic from "next/dynamic"
 import Image from "next/image"
 import { X } from "lucide-react"
+import { getImagePath } from '../../utils/image-path'
 
 // Dynamically import legal document contents
 const DatenschutzContent = dynamic(
@@ -185,7 +186,7 @@ export default function Footer() {
               </div>
               <div className="w-48 h-24 relative flex justify-end">
                 <Image
-                  src={process.env.NODE_ENV === 'production' ? '/vocal-coaching/images/footer/footer.png' : '/images/footer/footer.png'}
+                  src={getImagePath('/images/footer/footer.png')}
                   alt="Footer decoration"
                   width={192}
                   height={96}

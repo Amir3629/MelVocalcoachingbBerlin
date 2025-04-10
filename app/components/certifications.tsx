@@ -3,13 +3,14 @@
 import Image from "next/image"
 import { Music, Mic2, BookOpen, Trophy } from "lucide-react"
 import { useTranslation } from "react-i18next"
+import { getImagePath } from '../../utils/image-path'
 
 const journeyData = [
   {
     title: "Singen",
     subtitle: "Gesangsunterricht",
     icon: Music,
-    image: process.env.NODE_ENV === 'production' ? "/vocal-coaching/images/cards/singing.jpg" : "/images/cards/singing.jpg",
+    image: getImagePath('/images/cards/singing.jpg'),
     items: [
       "Stimmbildung und Atemtechnik",
       "Repertoire-Aufbau",
@@ -22,7 +23,7 @@ const journeyData = [
     title: "Sprechen",
     subtitle: "Sprechtraining",
     icon: Mic2,
-    image: process.env.NODE_ENV === 'production' ? "/vocal-coaching/images/cards/speaking.jpg" : "/images/cards/speaking.jpg",
+    image: getImagePath('/images/cards/speaking.jpg'),
     items: [
       "Artikulation",
       "Resonanz",
@@ -35,7 +36,7 @@ const journeyData = [
     title: "Lernen",
     subtitle: "Musiktheorie",
     icon: BookOpen,
-    image: process.env.NODE_ENV === 'production' ? "/vocal-coaching/images/cards/learning.jpg" : "/images/cards/learning.jpg",
+    image: getImagePath('/images/cards/learning.jpg'),
     items: [
       "Grundlagen der Musiktheorie",
       "Rhythmus und Timing",
@@ -48,7 +49,7 @@ const journeyData = [
     title: "Erfolg",
     subtitle: "Zertifizierung",
     icon: Trophy,
-    image: process.env.NODE_ENV === 'production' ? "/vocal-coaching/images/cards/success.jpg" : "/images/cards/success.jpg",
+    image: getImagePath('/images/cards/success.jpg'),
     items: [
       "Prüfungsvorbereitung",
       "Auftrittstraining",

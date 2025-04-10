@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import Image from "next/image"
 import { Trophy, Users, Music, ChevronDown } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { getImagePath } from '../../utils/image-path'
 
 // Line-by-line reveal component
 const LineReveal = ({ text, delay = 0, visible = false }: { text: string, delay?: number, visible: boolean }) => {
@@ -29,9 +30,7 @@ export default function AboutSectionFixed() {
   const detailsRef = useRef<HTMLDivElement>(null)
   const { t } = useTranslation()
 
-  const imagePath = process.env.NODE_ENV === 'production'
-    ? "/vocal-coaching/images/about/profile.jpg"
-    : "/images/about/profile.jpg"
+  const imagePath = getImagePath('/images/about/profile.jpg')
 
   const handleReadMore = () => {
     setIsExpanded(true)

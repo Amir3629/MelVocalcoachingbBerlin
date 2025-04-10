@@ -2,13 +2,12 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
+import { getImagePath } from '../../utils/image-path'
 
 const images = [
   {
     name: "Method 1: Direct path with NODE_ENV check",
-    src: process.env.NODE_ENV === 'production' 
-      ? "/vocal-coaching/images/services/studio.jpg"
-      : "/images/services/studio.jpg"
+    src: getImagePath('/images/services/studio.jpg')
   },
   {
     name: "Method 2: Using NEXT_PUBLIC_BASE_PATH",

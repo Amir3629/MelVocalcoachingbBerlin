@@ -11,7 +11,7 @@ import type { Metadata, Viewport } from "next"
 import { Inter, Playfair_Display, Cormorant_Garamond, Montserrat, Roboto } from "next/font/google"
 import RootClient from "./components/root-client"
 import { MediaProvider } from "./components/media-context"
-import { getImagePath } from './utils/image-path'
+import { getImagePath } from '../../utils/image-path'
 
 const inter = Inter({ subsets: ["latin"] })
 const playfair = Playfair_Display({
@@ -58,12 +58,12 @@ export const metadata: Metadata = {
     apple: { url: getImagePath('/images/logo/ml-logo.PNG'), sizes: '180x180' },
     other: [
       {
-        url: '/MelVocalcoachingbBerlin/favicon/site.webmanifest',
+        url: getImagePath('/favicon/site.webmanifest'),
         rel: 'manifest'
       }
     ]
   },
-  manifest: '/MelVocalcoachingbBerlin/favicon/site.webmanifest',
+  manifest: getImagePath('/favicon/site.webmanifest'),
 }
 
 export default function RootLayout({

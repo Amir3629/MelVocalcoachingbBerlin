@@ -1,64 +1,36 @@
-name: Deploy to GitHub Pages
-
-on:
-  push:
-    branches: ["main"]
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
-jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-        
-      - name: Create static site
-        shell: bash
-        run: |
-          # Create _site directory for deployment
-          mkdir -p _site
-          
-          # Copy public directory content to _site
-          cp -r public/* _site/
-          
-          # Ensure .nojekyll file exists
-          touch _site/.nojekyll
-          
-          # Create redirects for any nested paths
-          mkdir -p _site/MelVocalcoachingbBerlin/MelVocalcoachingbBerlin
-          
-          # Create redirect file for nested path
-          echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta http-equiv="refresh" content="0;url=/MelVocalcoachingbBerlin/"></head><body>Redirecting...</body></html>' > _site/MelVocalcoachingbBerlin/MelVocalcoachingbBerlin/index.html
-          
-          # Create redirect at root if needed
-          if [ ! -f "_site/index.html" ]; then
-            echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta http-equiv="refresh" content="0;url=/MelVocalcoachingbBerlin/"></head><body>Redirecting...</body></html>' > _site/index.html
-          fi
-          
-          # List files for debugging
-          echo "Files in _site directory:"
-          find _site -type f | sort
-          
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: '_site'
-          
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+name: Deploy to GitHub Pages 
+ 
+on: 
+  push: 
+    branches: ["main"] 
+  workflow_dispatch: 
+ 
+permissions: 
+  contents: read 
+  pages: write 
+  id-token: write 
+ 
+concurrency: 
+  group: "pages" 
+  cancel-in-progress: false 
+ 
+jobs: 
+  deploy: 
+    environment: 
+      name: github-pages 
+      url: ${{ steps.deployment.outputs.page_url }} 
+    runs-on: ubuntu-latest 
+    steps: 
+      - name: Checkout 
+        uses: actions/checkout@v4 
+ 
+      - name: Setup Node.js 
+        uses: actions/setup-node@v4 
+        with: 
+          node-version: '20' 
+          cache: 'npm' 
+ 
+      - name: Install dependencies 
+        run: npm ci 
+ 
+      - name: Create fallback static site 
